@@ -1,0 +1,84 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-header {
+  margin-bottom: 48px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.page-title {
+  color: var(--text-main);
+  font-family: var(--font-logo);
+  font-weight: 800;
+  margin: 0;
+  font-size: 48px;
+  letter-spacing: -2.4px;
+}
+
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border: 1px solid var(--border-copper);
+  padding: 8px 16px;
+  border-radius: 4px;
+  width: max-content;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #00FF00;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #00FF00;
+}
+
+.tabs-container {
+  display: flex;
+  background-color: #353535;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid var(--border-copper);
+  width: max-content;
+}
+
+.tab {
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px 24px;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.tab:hover:not(.active) {
+  color: var(--text-main);
+}
+
+.tab.active {
+  color: var(--accent-neon);
+  background-color: var(--accent-copper);
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}

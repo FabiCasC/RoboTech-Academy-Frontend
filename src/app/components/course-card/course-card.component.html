@@ -1,0 +1,25 @@
+<div class="course-card">
+  <div class="card-image-wrapper">
+    @if (badge) {
+      <div class="badge">{{ badge }}</div>
+    }
+    <div class="image-placeholder" [style.background-image]="'url(' + image + ')'"></div>
+  </div>
+
+  <div class="card-content">
+    <h3 class="course-title">{{ title }}</h3>
+    <p class="course-description">{{ description }}</p>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-label">PROGRESO</span>
+        <span class="progress-value">{{ progress }}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="progress"></div>
+      </div>
+    </div>
+
+    <button class="continue-btn">CONTINUAR</button>
+  </div>
+</div>

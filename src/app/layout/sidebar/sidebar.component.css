@@ -1,0 +1,70 @@
+.sidebar-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 32px 0;
+}
+
+.sidebar-header {
+  margin-bottom: 48px;
+  padding: 0 32px;
+}
+
+.app-title {
+  color: var(--text-main);
+  font-family: var(--font-logo);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+.version-badge {
+  font-size: 10px;
+  color: var(--text-muted);
+  border: 1px solid var(--border-copper);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 32px;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  position: relative;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.nav-item:hover:not(.disabled) {
+  color: var(--text-main);
+  background-color: var(--accent-copper-light);
+}
+
+.nav-item.active {
+  color: var(--accent-neon);
+  background-color: var(--accent-copper-light);
+  border-right: 2px solid var(--accent-neon);
+  box-shadow: -4px 0px 12px 0px var(--accent-copper-light);
+}
+
+.nav-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nav-icon {
+  font-size: 18px;
+}
+
+.nav-label {
+  letter-spacing: 0.5px;
+}
