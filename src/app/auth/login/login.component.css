@@ -1,0 +1,256 @@
+* {
+  box-sizing: border-box;
+}
+
+.auth-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+.auth-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #333333;
+  position: relative;
+  background: radial-gradient(circle at center, rgba(26, 26, 26, 0.3) 0%, #000 70%);
+}
+
+.image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.neon-image {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.brand-text {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  color: #FFB4A8;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.auth-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  background-color: rgba(20, 20, 20, 0.7);
+  border: 1px solid #333333;
+  backdrop-filter: blur(10px);
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.auth-header {
+  text-align: center;
+}
+
+.auth-header h1 {
+  color: #E2E2E2;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.subtitle {
+  color: #603E39;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #EBBBB4;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #0E0E0E;
+  border: 1px solid #333333;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: #603E39;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 12px 12px 12px 40px;
+  color: #E2E2E2;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.input-wrapper input::placeholder {
+  color: #6B7280;
+}
+
+.forgot-link {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.forgot-link a {
+  color: #FFB4A8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.forgot-link a:hover {
+  opacity: 0.8;
+}
+
+.submit-btn {
+  background-color: #FF0000;
+  color: white;
+  border: none;
+  padding: 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #CC0000;
+}
+
+.submit-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.register-link {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.register-link p {
+  color: #EBBBB4;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.register-link a {
+  color: #FFB4A8;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid #FFB4A8;
+  padding-bottom: 2px;
+  cursor: pointer;
+}
+
+.language-selector {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(14, 14, 14, 0.5);
+  border: 1px solid #333333;
+  backdrop-filter: blur(6px);
+  padding: 4px;
+}
+
+.lang-option {
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  color: #EBBBB4;
+  cursor: pointer;
+}
+
+.lang-option.active {
+  background-color: #DC2626;
+  color: white;
+}
+
+.lang-divider {
+  color: #333333;
+  font-size: 0.75rem;
+}
+
+.lang-icon {
+  font-size: 0.75rem;
+  padding: 0 4px;
+}
+
+@media (max-width: 900px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    display: none;
+  }
+}
