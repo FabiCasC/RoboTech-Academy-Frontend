@@ -1,0 +1,132 @@
+.course-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(6px);
+  border: 1px solid #333333;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 487px;
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  border-color: var(--border-copper);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
+}
+
+.card-image-wrapper {
+  position: relative;
+  height: 180px;
+  width: 100%;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+  background-size: cover;
+  background-position: center;
+  mix-blend-mode: luminosity;
+  opacity: 0.6;
+  border-bottom: 1px solid #333333;
+}
+
+.course-card:hover .image-placeholder {
+  mix-blend-mode: normal;
+  opacity: 0.9;
+}
+
+.badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background-color: var(--accent-copper);
+  color: var(--accent-neon);
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 2px;
+  z-index: 2;
+  letter-spacing: 1px;
+}
+
+.card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.course-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: var(--text-main);
+  font-family: var(--font-logo);
+  font-weight: 700;
+}
+
+.course-description {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.progress-section {
+  margin-bottom: 24px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.progress-label {
+  color: var(--text-gray);
+}
+
+.progress-value {
+  color: var(--accent-neon);
+}
+
+.progress-bar-bg {
+  height: 4px;
+  background-color: #333333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--accent-neon);
+  transition: width 0.5s ease;
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid rgba(255, 180, 168, 0.3);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.continue-btn:hover {
+  background-color: var(--accent-copper-light);
+  border-color: var(--accent-neon);
+  color: var(--accent-neon);
+}
