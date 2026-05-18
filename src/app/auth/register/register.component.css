@@ -1,0 +1,261 @@
+.auth-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0c0c0c;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-box {
+  display: flex;
+  width: 95%;
+  max-width: 1300px;
+  height: 90vh;
+  border: 1px solid #222;
+  background-color: #111111;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.auth-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #222;
+  position: relative;
+  background: radial-gradient(circle at center, rgba(30, 10, 10, 0.5) 0%, #0c0c0c 70%);
+  padding: 40px;
+}
+
+.top-left {
+  color: #FFB4A8;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
+.image-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.neon-image {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.4));
+}
+
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.secure-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #FF0000;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 5px #FF0000;
+}
+
+.auth-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 60px;
+  background-color: #0c0c0c;
+  overflow-y: auto;
+}
+
+.top-right-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #FF0000;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.status-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.lang-option {
+  cursor: pointer;
+}
+
+.lang-option.active {
+  color: #FF0000;
+  border: 1px solid #FF0000;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.auth-header {
+  margin-bottom: 40px;
+}
+
+.auth-header h1 {
+  color: #E2E2E2;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0 0 15px 0;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #EBBBB4;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.input-icon {
+  position: absolute;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  color: #666;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 12px 40px 12px 0;
+  color: #E2E2E2;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.input-wrapper input::placeholder {
+  color: #444;
+}
+
+.input-wrapper input:focus {
+  border-bottom: 1px solid #FF0000;
+}
+
+.submit-btn {
+  background-color: #FF0000;
+  color: white;
+  border: none;
+  padding: 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+  letter-spacing: 1px;
+}
+
+.submit-btn:hover {
+  background-color: #CC0000;
+}
+
+.submit-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-link a {
+  color: #aaa;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.login-link a:hover {
+  color: #EBBBB4;
+}
+
+@media (max-width: 900px) {
+  .auth-box {
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    border: none;
+  }
+
+  .auth-left {
+    display: none;
+  }
+}
