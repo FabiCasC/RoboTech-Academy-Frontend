@@ -1,0 +1,69 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  padding: 0 64px;
+  background: rgba(14, 14, 14, 0.80);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-copper);
+  box-shadow: 0px 4px 20px 0px var(--accent-copper-light);
+  z-index: 10;
+}
+
+.logo {
+  font-family: var(--font-logo);
+  font-size: 32px;
+  font-weight: 700;
+  font-style: italic;
+  text-transform: uppercase;
+  color: var(--accent-neon);
+  line-height: 38.4px;
+  letter-spacing: -0.8px;
+}
+
+.topbar-center {
+  display: flex;
+  gap: 16px;
+}
+
+.action-btn {
+  background: transparent;
+  color: var(--accent-neon);
+  border: 1px solid rgba(255, 180, 168, 0.3);
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.action-btn:hover {
+  background: var(--accent-copper-light);
+  border-color: var(--accent-neon);
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-copper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.avatar-text {
+  font-weight: 700;
+  color: var(--accent-neon);
+  font-size: 14px;
+}
