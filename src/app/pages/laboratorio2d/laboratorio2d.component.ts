@@ -11,13 +11,8 @@ export interface SchematicComponent {
   ports: SchematicPort[];
 }
 
-export interface Connection {
-  from: string; to: string; path: string;
-}
-
-export interface Telemetry {
-  pwr: string; lat: string; status: string;
-}
+export interface Connection { from: string; to: string; path: string; }
+export interface Telemetry { pwr: string; lat: string; status: string; }
 
 @Component({
   selector: 'app-laboratorio2d',
@@ -35,31 +30,28 @@ export class Laboratorio2dComponent implements OnInit {
   activeTool: 'pan' | 'select' = 'select';
   selectedId: string | null = null;
 
-  telemetry: Telemetry = {
-    pwr: '5.0V / 2.1A',
-    lat: '12ms',
-    status: 'NOMINAL',
-  };
+  telemetry: Telemetry = { pwr: '5.0V / 2.1A', lat: '12ms', status: 'NOMINAL' };
 
   components: SchematicComponent[] = [
     {
       id: 'ctrl_unit', label: 'CTRL_UNIT',
-      x: 170, y: 90, w: 165, h: 215,
+      x: 170, y: 80, w: 165, h: 256,
       ports: [{ active: true }, { active: false }, { active: false }],
     },
     {
       id: 'motor_drv_a', label: 'MOTOR_DRV_A',
-      x: 450, y: 28, w: 140, h: 68,
+      x: 460, y: 20, w: 140, h: 72,
       ports: [{ active: false }],
     },
     {
       id: 'ir_sens_01', label: 'IR_SENS_01',
-      x: 430, y: 150, w: 135, h: 65,
+      x: 440, y: 160, w: 135, h: 96,
       ports: [{ active: true }],
     },
   ];
 
   connections: Connection[] = [];
+
   private dragging: SchematicComponent | null = null;
   private dragOffsetX = 0;
   private dragOffsetY = 0;
@@ -109,29 +101,27 @@ export class Laboratorio2dComponent implements OnInit {
   }
 
   private buildConnections(): void {
-    const ctrl = this.components.find(c => c.id === 'ctrl_unit');
+    const ctrl  = this.components.find(c => c.id === 'ctrl_unit');
     const motor = this.components.find(c => c.id === 'motor_drv_a');
-    const ir = this.components.find(c => c.id === 'ir_sens_01');
+    const ir    = this.components.find(c => c.id === 'ir_sens_01');
     this.connections = [];
 
     if (ctrl && motor) {
-      const x1 = ctrl.x + ctrl.w, y1 = ctrl.y + 20;
-      const x2 = motor.x, y2 = motor.y + motor.h / 2;
+      // Puerto derecho de ctrl → puerto izquierdo de motor
+      const x1 = ctrl.x + ctrl.w, y1 = ctrl.y + 23;
+      const x2 = motor.x,         y2 = motor.y + motor.h / 2;
       const mx = (x1 + x2) / 2;
-      this.connections.push({
-        from: 'ctrl_unit', to: 'motor_drv_a',
-        path: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`,
-      });
+      this.connections.push({ from: 'ctrl_unit', to: 'motor_drv_a',
+        path: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}` });
     }
 
     if (ctrl && ir) {
+      // Puerto derecho de ctrl → puerto izquierdo de ir
       const x1 = ctrl.x + ctrl.w, y1 = ctrl.y + 55;
-      const x2 = ir.x, y2 = ir.y + ir.h / 2;
+      const x2 = ir.x,            y2 = ir.y + ir.h / 2;
       const mx = (x1 + x2) / 2;
-      this.connections.push({
-        from: 'ctrl_unit', to: 'ir_sens_01',
-        path: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`,
-      });
+      this.connections.push({ from: 'ctrl_unit', to: 'ir_sens_01',
+        path: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}` });
     }
   }
 }

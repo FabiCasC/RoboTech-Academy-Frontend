@@ -12,8 +12,7 @@
 
     <div class="navbar-actions">
       <button class="btn-3d">
-        <!-- Cambiar a 3D icon: cube/layers -->
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/>
           <line x1="12" y1="2" x2="12" y2="20"/>
           <line x1="4" y1="6.5" x2="20" y2="6.5"/>
@@ -21,11 +20,11 @@
         Cambiar a 3D
       </button>
       <button class="btn-simular">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg width="9" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         SIMULAR
       </button>
       <button class="btn-user">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
@@ -41,10 +40,8 @@
         <div class="user-name">RoboTech Academy</div>
         <div class="user-version">V1.0.2-BETA</div>
       </div>
-
       <nav class="sidebar-nav">
 
-        <!-- Dashboard: icono ((·)) ondas de radio -->
         <a class="nav-item active">
           <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
@@ -56,7 +53,6 @@
           Dashboard
         </a>
 
-        <!-- Labs: nodos en red / grafo -->
         <a class="nav-item">
           <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="5" cy="12" r="2"/>
@@ -68,7 +64,6 @@
           Labs
         </a>
 
-        <!-- Components kit: grid de cuadros -->
         <a class="nav-item">
           <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -79,7 +74,6 @@
           Components kit
         </a>
 
-        <!-- Settings: engranaje -->
         <a class="nav-item">
           <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="3"/>
@@ -88,7 +82,6 @@
           Settings
         </a>
 
-        <!-- Foro: gráfica de tendencia -->
         <a class="nav-item">
           <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
@@ -100,41 +93,46 @@
       </nav>
     </aside>
 
-    <!-- WORKSPACE AREA -->
+    <!-- WORKSPACE -->
     <div class="workspace-wrap">
-
-      <div class="ws-topbar">
-        <div class="ws-topbar-left">
-          <span class="live-dot"></span>
-          LIVE WORKSPACE : {{ workspaceName }}
-        </div>
-        <div class="ws-topbar-right">GRID: 32PX &nbsp;&nbsp; ZOOM: {{ zoom }}%</div>
-      </div>
-
-      <!-- Canvas border wrapper (el rectángulo visible en el Figma) -->
       <div class="canvas-border">
+
+        <!-- Topbar del canvas -->
+        <div class="ws-topbar">
+          <div class="ws-topbar-left">
+            <span class="live-dot"></span>
+            LIVE WORKSPACE : {{ workspaceName }}
+          </div>
+          <div class="ws-topbar-right">
+            <span>GRID: 32PX</span>
+            <span>ZOOM: {{ zoom }}%</span>
+          </div>
+        </div>
+
+        <!-- Canvas interactivo -->
         <div class="workspace" #workspace
              (mousemove)="onMouseMove($event)"
              (mouseup)="onMouseUp()">
 
-          <div class="grid-bg"></div>
-
+          <!-- SVG líneas de conexión -->
           <svg class="connectors-svg">
             <path *ngFor="let c of connections"
                   [attr.d]="c.path"
-                  stroke="#cc5a4560" stroke-width="1.5"
-                  fill="none" stroke-dasharray="4 3"/>
+                  stroke="#FFB4A840" stroke-width="1"
+                  fill="none" stroke-dasharray="6 4"/>
           </svg>
 
-          <!-- Componentes -->
+          <!-- CTRL_UNIT: card grande con ports a la DERECHA -->
           <div *ngFor="let comp of components"
                class="component-card"
                [class.selected]="comp.id === selectedId"
+               [class.card-large]="comp.id === 'ctrl_unit'"
+               [class.card-small]="comp.id !== 'ctrl_unit'"
                [ngStyle]="{ left: comp.x + 'px', top: comp.y + 'px', width: comp.w + 'px', height: comp.h + 'px' }"
                (mousedown)="startDrag($event, comp)">
 
             <div class="card-header">
-              <!-- CTRL_UNIT: CPU chip -->
+              <!-- CTRL_UNIT icon: CPU -->
               <svg *ngIf="comp.id === 'ctrl_unit'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="4" y="4" width="16" height="16" rx="2"/>
                 <rect x="9" y="9" width="6" height="6"/>
@@ -143,13 +141,13 @@
                 <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
                 <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
               </svg>
-              <!-- MOTOR_DRV: 3 líneas verticales (barras) -->
-              <svg *ngIf="comp.id === 'motor_drv_a'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="4" x2="5" y2="20"/>
-                <line x1="12" y1="4" x2="12" y2="20"/>
-                <line x1="19" y1="4" x2="19" y2="20"/>
+              <!-- MOTOR_DRV icon: barras verticales -->
+              <svg *ngIf="comp.id === 'motor_drv_a'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="3" x2="5" y2="21"/>
+                <line x1="12" y1="3" x2="12" y2="21"/>
+                <line x1="19" y1="3" x2="19" y2="21"/>
               </svg>
-              <!-- IR_SENS: ondas de señal -->
+              <!-- IR_SENS icon: ondas -->
               <svg *ngIf="comp.id === 'ir_sens_01'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <circle cx="12" cy="12" r="2"/>
                 <path d="M8.5 8.5a5 5 0 0 0 0 7"/>
@@ -158,51 +156,70 @@
               {{ comp.label }}
             </div>
 
-            <div class="card-body">
-              <div *ngFor="let port of comp.ports; let i = index"
-                   class="port"
-                   [class.active]="port.active"
-                   [ngStyle]="{ top: (20 + i * 35) + 'px' }">
-              </div>
+            <!-- Body solo para CTRL_UNIT -->
+            <div *ngIf="comp.id === 'ctrl_unit'" class="card-body">
+              <!-- Ports a la DERECHA para CTRL_UNIT -->
+              <div class="port port-right active" style="top: 17px;"></div>
+              <div class="port port-right"        style="top: 49px;"></div>
+              <div class="port port-right"        style="top: 81px;"></div>
             </div>
+
+            <!-- Port a la IZQUIERDA para componentes pequeños -->
+            <div *ngIf="comp.id !== 'ctrl_unit'"
+                 class="port port-left"
+                 [class.active]="comp.ports[0].active">
+            </div>
+
           </div>
 
           <!-- Telemetry -->
           <div class="telemetry">
             <div class="tele-title">SYS_TELEMETRY</div>
-            <div class="tele-row"><span class="tele-key">PWR:</span><span class="tele-val">{{ telemetry.pwr }}</span></div>
-            <div class="tele-row"><span class="tele-key">LAT:</span><span class="tele-val">{{ telemetry.lat }}</span></div>
-            <div class="tele-row"><span class="tele-key">STATUS:</span><span class="tele-status" [class.nominal]="telemetry.status === 'NOMINAL'">{{ telemetry.status }}</span></div>
+            <div class="tele-row">
+              <span class="tele-key">PWR:</span>
+              <span class="tele-val">{{ telemetry.pwr }}</span>
+            </div>
+            <div class="tele-row">
+              <span class="tele-key">LAT:</span>
+              <span class="tele-val">{{ telemetry.lat }}</span>
+            </div>
+            <div class="tele-row">
+              <span class="tele-key">STATUS:</span>
+              <span class="tele-status" [class.nominal]="telemetry.status === 'NOMINAL'">{{ telemetry.status }}</span>
+            </div>
           </div>
 
-        </div>
-      </div>
+        </div><!-- /workspace -->
+
+      </div><!-- /canvas-border -->
 
       <!-- Toolbar -->
       <footer class="toolbar">
-        <!-- Pan: mano abierta -->
-        <button class="tool-btn" [class.active]="activeTool === 'pan'" (click)="setTool('pan')" title="Pan">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <!-- Mano: pan del canvas -->
+        <button class="tool-btn" [class.active]="activeTool === 'pan'" (click)="setTool('pan')" title="Mover canvas">
+          <svg width="20" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M18 11V6a2 2 0 0 0-4 0v0M14 10V4a2 2 0 0 0-4 0v0M10 10.5V6a2 2 0 0 0-4 0v8M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8v-1a2 2 0 0 1 2-2h2"/>
           </svg>
         </button>
-        <!-- Select: cursor/flecha -->
-        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')" title="Select">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <!-- Cursor: seleccionar componentes -->
+        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')" title="Seleccionar">
+          <svg width="14" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M4 3l16 9-9 2-4 8z"/>
           </svg>
         </button>
+
         <div class="tool-sep"></div>
-        <!-- Undo: flecha circular -->
-        <button class="tool-btn" (click)="undo()" title="Undo">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+        <!-- Undo -->
+        <button class="tool-btn" (click)="undo()" title="Deshacer">
+          <svg width="16" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M3 7v6h6"/>
             <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
           </svg>
         </button>
-        <!-- Delete: papelera -->
-        <button class="tool-btn" (click)="deleteSelected()" title="Delete">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <!-- Delete -->
+        <button class="tool-btn" (click)="deleteSelected()" title="Eliminar seleccionado">
+          <svg width="16" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <polyline points="3 6 5 6 21 6"/>
             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
             <path d="M10 11v6M14 11v6"/>
@@ -211,6 +228,6 @@
         </button>
       </footer>
 
-    </div>
-  </div>
+    </div><!-- /workspace-wrap -->
+  </div><!-- /body-area -->
 </div>
