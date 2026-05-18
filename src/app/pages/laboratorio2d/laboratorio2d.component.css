@@ -1,0 +1,558 @@
+/* ================================================
+   LABORATORIO 2D — ROBOTECH ACADEMY
+   Valores exactos exportados desde Figma
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,700&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.lab-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background:
+    linear-gradient(90deg, #1A1A1A 3.12%, rgba(26,26,26,0) 3.12%),
+    linear-gradient(180deg, #1A1A1A 3.12%, rgba(26,26,26,0) 3.12%),
+    #000000;
+  color: #ccc;
+  font-family: 'Space Grotesk', 'Courier New', monospace;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+/* ======= NAVBAR ======= */
+.navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 64px;
+  gap: 73px;
+  height: 64px;
+  background: rgba(14, 14, 14, 0.8);
+  border-bottom: 1px solid rgba(96, 62, 57, 0.3);
+  box-shadow: 0px 4px 20px rgba(255, 180, 168, 0.1);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.navbar-logo {
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 38px;
+  color: #FFB4A8;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.navbar-tabs {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 64px;
+  flex: 1;
+  justify-content: flex-start;
+  padding-left: 32px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: #EBBBB4;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 0 16px;
+  cursor: pointer;
+  position: relative;
+  height: 100%;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-btn:hover { color: #FFB4A8; }
+
+.tab-btn.tab-active {
+  color: #FFB4A8;
+  border-bottom: 1px solid #FFB4A8;
+  box-shadow: 0px 4px 12px rgba(255, 180, 168, 0.3);
+  background: rgba(255, 255, 255, 0.002);
+}
+
+.navbar-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.btn-3d {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+  border: 1px solid #FFB4A8;
+  border-radius: 2px;
+  background: transparent;
+  color: #FFB4A8;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn-3d:hover { background: rgba(255, 180, 168, 0.05); }
+
+.btn-simular {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 24px;
+  gap: 8px;
+  background: #FF0000;
+  box-shadow: 0px 0px 12px rgba(255, 0, 0, 0.6);
+  border-radius: 2px;
+  border: none;
+  color: #FFFFFF;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-simular:hover { background: #cc0000; }
+
+.btn-user {
+  background: transparent;
+  border: none;
+  color: #EBBBB4;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ======= BODY ======= */
+.body-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ======= SIDEBAR ======= */
+.sidebar {
+  width: 256px;
+  background: rgba(14, 14, 14, 0.9);
+  border-right: 1px solid rgba(96, 62, 57, 0.3);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.sidebar-user {
+  padding: 0px 24px;
+  padding-top: 12px;
+  padding-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #E2E2E2;
+}
+
+.user-version {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 1.2px;
+  color: #EBBBB4;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  width: 255px;
+  cursor: pointer;
+  color: #454747;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+  transition: color 0.1s, background 0.1s;
+  border-right: 2px solid transparent;
+}
+
+.nav-item:hover { color: #888; }
+
+.nav-item.active {
+  background: rgba(255, 180, 168, 0.1);
+  border-right: 2px solid #FFB4A8;
+  box-shadow: inset -4px 0px 12px rgba(255, 180, 168, 0.1);
+  color: #FFB4A8;
+}
+
+.nav-ico {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+/* ======= WORKSPACE WRAP ======= */
+.workspace-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ======= CANVAS GLASS CONTAINER ======= */
+.canvas-border {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 20, 20, 0.7);
+  border: 1px solid #333333;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* ======= WS TOPBAR ======= */
+.ws-topbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 24px;
+  height: 48px;
+  background: rgba(14, 14, 14, 0.5);
+  border-bottom: 1px solid #333333;
+  flex-shrink: 0;
+}
+
+.ws-topbar-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 1.2px;
+  color: #FFB4A8;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 12px;
+  background: #FF0000;
+  box-shadow: 0px 0px 6px #FF0000;
+  flex-shrink: 0;
+}
+
+.ws-topbar-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #EBBBB4;
+}
+
+/* ======= WORKSPACE CANVAS ======= */
+.workspace {
+  flex: 1;
+  position: relative;
+  background:
+    linear-gradient(90deg, #1A1A1A 3.12%, rgba(26,26,26,0) 3.12%),
+    linear-gradient(180deg, #1A1A1A 3.12%, rgba(26,26,26,0) 3.12%);
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.grid-bg { display: none; } /* El grid viene del background del workspace */
+
+.connectors-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ======= COMPONENT CARDS ======= */
+.component-card {
+  position: absolute;
+  border: 1px solid #333333;
+  background: #353535;
+  border-radius: 2px;
+  cursor: move;
+  user-select: none;
+  transition: border-color 0.1s;
+}
+
+.component-card.selected {
+  border-color: #FFB4A8;
+  box-shadow: 0px 0px 15px rgba(255, 0, 0, 0.15);
+}
+
+.component-card:hover { border-color: #555; }
+
+.card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #333;
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  color: #EBBBB4;
+  gap: 8px;
+}
+
+.card-ico {
+  width: 18px;
+  height: 18px;
+  color: #FFB4A8;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.card-body {
+  position: relative;
+  height: calc(100% - 52px);
+  background: #131313;
+  border: 1px solid #333333;
+  margin: 0 16px 16px;
+}
+
+/* ======= PORTS ======= */
+.port {
+  position: absolute;
+  right: -7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  border: 2px solid #353535;
+  background: #C8C6C5;
+  cursor: pointer;
+}
+
+.port.active {
+  background: #FFB4A8;
+  border-color: #353535;
+  box-shadow: 0px 0px 6px #FF0000;
+}
+
+/* ======= TELEMETRY ======= */
+.telemetry {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 8px;
+  width: 192px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #333333;
+  backdrop-filter: blur(6px);
+  border-radius: 2px;
+  box-shadow: 0px 20px 25px -5px rgba(0,0,0,0.1), 0px 8px 10px -6px rgba(0,0,0,0.1);
+}
+
+.tele-title {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 1.2px;
+  color: #FFB4A8;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333333;
+  width: 100%;
+}
+
+.tele-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.tele-key {
+  font-weight: 400;
+  color: #EBBBB4;
+}
+
+.tele-val {
+  font-weight: 400;
+  color: #FFFFFF;
+}
+
+.tele-status {
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.tele-status.nominal {
+  color: #FF0000;
+  filter: drop-shadow(0px 0px 2px #FF0000);
+}
+
+/* ======= TOOLBAR ======= */
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0px 0px;
+  gap: 16px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.tool-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  background: #2A2A2A;
+  border: 1px solid #333333;
+  border-radius: 2px;
+  color: #EBBBB4;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.tool-btn:hover {
+  background: #333;
+  border-color: #555;
+  color: #FFB4A8;
+}
+
+.tool-btn.active {
+  background: rgba(255, 180, 168, 0.1);
+  border: 1px solid #FFB4A8;
+  box-shadow: inset 0px 0px 8px 1px rgba(255, 0, 0, 0.2);
+  color: #FFB4A8;
+}
+
+.tool-sep {
+  width: 1px;
+  height: 32px;
+  background: #333333;
+}
+
+/* ======= PORTS CORREGIDOS ======= */
+/* Port derecho (CTRL_UNIT) */
+.port-right {
+  position: absolute;
+  right: -7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  border: 2px solid #353535;
+  background: #C8C6C5;
+  cursor: pointer;
+}
+
+.port-right.active {
+  background: #FFB4A8;
+  border-color: #353535;
+  box-shadow: 0px 0px 6px #FF0000;
+}
+
+/* Port izquierdo (MOTOR_DRV, IR_SENS) */
+.port-left {
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  border: 2px solid #131313;
+  background: #C8C6C5;
+  cursor: pointer;
+}
+
+.port-left.active {
+  background: #FFB4A8;
+  border-color: #131313;
+  box-shadow: 0px 0px 4px #FF0000;
+}
+
+/* Card pequeña sin card-body extra */
+.card-small {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-small .card-header {
+  border-bottom: none;
+  height: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}

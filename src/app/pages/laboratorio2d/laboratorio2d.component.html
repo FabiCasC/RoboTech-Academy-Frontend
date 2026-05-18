@@ -1,0 +1,233 @@
+<div class="lab-root">
+
+  <!-- TOP NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-logo">ROBOTECH_ACADEMY</div>
+
+    <nav class="navbar-tabs">
+      <button class="tab-btn" [class.tab-active]="activeTab === 'play'" (click)="activeTab = 'play'">PLAY</button>
+      <button class="tab-btn" [class.tab-active]="activeTab === 'debug'" (click)="activeTab = 'debug'">DEBUG</button>
+      <button class="tab-btn" [class.tab-active]="activeTab === 'save'" (click)="activeTab = 'save'">SAVE</button>
+    </nav>
+
+    <div class="navbar-actions">
+      <button class="btn-3d">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/>
+          <line x1="12" y1="2" x2="12" y2="20"/>
+          <line x1="4" y1="6.5" x2="20" y2="6.5"/>
+        </svg>
+        Cambiar a 3D
+      </button>
+      <button class="btn-simular">
+        <svg width="9" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        SIMULAR
+      </button>
+      <button class="btn-user">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="body-area">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="user-name">RoboTech Academy</div>
+        <div class="user-version">V1.0.2-BETA</div>
+      </div>
+      <nav class="sidebar-nav">
+
+        <a class="nav-item active">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+            <path d="M8.5 8.5a5 5 0 0 0 0 7"/>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+            <path d="M5.5 5.5a9 9 0 0 0 0 13"/>
+            <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+          </svg>
+          Dashboard
+        </a>
+
+        <a class="nav-item">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="5" cy="12" r="2"/>
+            <circle cx="19" cy="5" r="2"/>
+            <circle cx="19" cy="19" r="2"/>
+            <line x1="7" y1="11.2" x2="17" y2="6.2"/>
+            <line x1="7" y1="12.8" x2="17" y2="17.8"/>
+          </svg>
+          Labs
+        </a>
+
+        <a class="nav-item">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Components kit
+        </a>
+
+        <a class="nav-item">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Settings
+        </a>
+
+        <a class="nav-item">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+            <polyline points="16 7 22 7 22 13"/>
+          </svg>
+          Foro
+        </a>
+
+      </nav>
+    </aside>
+
+    <!-- WORKSPACE -->
+    <div class="workspace-wrap">
+      <div class="canvas-border">
+
+        <!-- Topbar del canvas -->
+        <div class="ws-topbar">
+          <div class="ws-topbar-left">
+            <span class="live-dot"></span>
+            LIVE WORKSPACE : {{ workspaceName }}
+          </div>
+          <div class="ws-topbar-right">
+            <span>GRID: 32PX</span>
+            <span>ZOOM: {{ zoom }}%</span>
+          </div>
+        </div>
+
+        <!-- Canvas interactivo -->
+        <div class="workspace" #workspace
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()">
+
+          <!-- SVG líneas de conexión -->
+          <svg class="connectors-svg">
+            <path *ngFor="let c of connections"
+                  [attr.d]="c.path"
+                  stroke="#FFB4A840" stroke-width="1"
+                  fill="none" stroke-dasharray="6 4"/>
+          </svg>
+
+          <!-- CTRL_UNIT: card grande con ports a la DERECHA -->
+          <div *ngFor="let comp of components"
+               class="component-card"
+               [class.selected]="comp.id === selectedId"
+               [class.card-large]="comp.id === 'ctrl_unit'"
+               [class.card-small]="comp.id !== 'ctrl_unit'"
+               [ngStyle]="{ left: comp.x + 'px', top: comp.y + 'px', width: comp.w + 'px', height: comp.h + 'px' }"
+               (mousedown)="startDrag($event, comp)">
+
+            <div class="card-header">
+              <!-- CTRL_UNIT icon: CPU -->
+              <svg *ngIf="comp.id === 'ctrl_unit'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <rect x="9" y="9" width="6" height="6"/>
+                <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+                <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+              </svg>
+              <!-- MOTOR_DRV icon: barras verticales -->
+              <svg *ngIf="comp.id === 'motor_drv_a'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="3" x2="5" y2="21"/>
+                <line x1="12" y1="3" x2="12" y2="21"/>
+                <line x1="19" y1="3" x2="19" y2="21"/>
+              </svg>
+              <!-- IR_SENS icon: ondas -->
+              <svg *ngIf="comp.id === 'ir_sens_01'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="2"/>
+                <path d="M8.5 8.5a5 5 0 0 0 0 7"/>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+              </svg>
+              {{ comp.label }}
+            </div>
+
+            <!-- Body solo para CTRL_UNIT -->
+            <div *ngIf="comp.id === 'ctrl_unit'" class="card-body">
+              <!-- Ports a la DERECHA para CTRL_UNIT -->
+              <div class="port port-right active" style="top: 17px;"></div>
+              <div class="port port-right"        style="top: 49px;"></div>
+              <div class="port port-right"        style="top: 81px;"></div>
+            </div>
+
+            <!-- Port a la IZQUIERDA para componentes pequeños -->
+            <div *ngIf="comp.id !== 'ctrl_unit'"
+                 class="port port-left"
+                 [class.active]="comp.ports[0].active">
+            </div>
+
+          </div>
+
+          <!-- Telemetry -->
+          <div class="telemetry">
+            <div class="tele-title">SYS_TELEMETRY</div>
+            <div class="tele-row">
+              <span class="tele-key">PWR:</span>
+              <span class="tele-val">{{ telemetry.pwr }}</span>
+            </div>
+            <div class="tele-row">
+              <span class="tele-key">LAT:</span>
+              <span class="tele-val">{{ telemetry.lat }}</span>
+            </div>
+            <div class="tele-row">
+              <span class="tele-key">STATUS:</span>
+              <span class="tele-status" [class.nominal]="telemetry.status === 'NOMINAL'">{{ telemetry.status }}</span>
+            </div>
+          </div>
+
+        </div><!-- /workspace -->
+
+      </div><!-- /canvas-border -->
+
+      <!-- Toolbar -->
+      <footer class="toolbar">
+        <!-- Mano: pan del canvas -->
+        <button class="tool-btn" [class.active]="activeTool === 'pan'" (click)="setTool('pan')" title="Mover canvas">
+          <svg width="20" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M18 11V6a2 2 0 0 0-4 0v0M14 10V4a2 2 0 0 0-4 0v0M10 10.5V6a2 2 0 0 0-4 0v8M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8v-1a2 2 0 0 1 2-2h2"/>
+          </svg>
+        </button>
+        <!-- Cursor: seleccionar componentes -->
+        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')" title="Seleccionar">
+          <svg width="14" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 3l16 9-9 2-4 8z"/>
+          </svg>
+        </button>
+
+        <div class="tool-sep"></div>
+
+        <!-- Undo -->
+        <button class="tool-btn" (click)="undo()" title="Deshacer">
+          <svg width="16" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 7v6h6"/>
+            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+          </svg>
+        </button>
+        <!-- Delete -->
+        <button class="tool-btn" (click)="deleteSelected()" title="Eliminar seleccionado">
+          <svg width="16" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>
+      </footer>
+
+    </div><!-- /workspace-wrap -->
+  </div><!-- /body-area -->
+</div>
