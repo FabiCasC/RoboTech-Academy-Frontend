@@ -1,0 +1,178 @@
+<div class="shell">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>DASHBOARD</h1>
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                SYS.STATUS: ONLINE
+            </div>
+        </div>
+        <div class="tab-group">
+            <button class="tab" routerLink="/proyectos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">PROYECTOS</button>
+            <button class="tab" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">CURSOS</button>
+        </div>
+    </div>
+
+    <!-- CONTENT GRID -->
+    <div class="content-grid">
+
+        <!-- PROJECT CARD -->
+        <div class="project-card">
+            <div class="card-header">
+                <div></div>
+                <span class="card-id">ID: RSL-001</span>
+            </div>
+
+            <div>
+                <div class="card-title">
+                    Robot Seguidor de Línea <span class="level">(Nivel Básico)</span>
+                </div>
+                <p class="card-desc" style="margin-top:12px;">
+                    Plataforma robótica autónoma diseñada para rastrear y seguir trayectorias de alto contraste
+                    mediante sensores infrarrojos. Implementa algoritmos de control proporcional para corrección de
+                    trayectoria en tiempo real.
+                </p>
+            </div>
+
+            <div class="card-divider"></div>
+
+            <div class="card-body">
+                <!-- Objectives -->
+                <div>
+                    <div class="section-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 6h16M4 10h16M4 14h8" />
+                        </svg>
+                        OBJETIVOS DE DISEÑO
+                    </div>
+                    <div class="objective-item">
+                        <div class="obj-icon active"></div>
+                        <div class="obj-text">
+                            <strong>Cinemática Diferencial</strong>
+                            Control de tracción independiente.
+                        </div>
+                    </div>
+                    <div class="objective-item">
+                        <div class="obj-icon inactive"></div>
+                        <div class="obj-text">
+                            <strong>Lógica PID (Proporcional)</strong>
+                            Ajuste de error en trayectoria.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOM -->
+                <div>
+                    <div class="section-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                            <path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
+                        </svg>
+                        LISTA DE MATERIALES (BOM)
+                    </div>
+                    <div class="bom-list">
+                        <div class="bom-item">
+                            <span>Sensores IR (TCRT5000)</span>
+                            <span class="bom-qty">2x</span>
+                        </div>
+                        <div class="bom-item">
+                            <span>Motores DC con Reductora</span>
+                            <span class="bom-qty">2x</span>
+                        </div>
+                        <div class="bom-item">
+                            <span>Arduino Uno R3</span>
+                            <span class="bom-qty">1x</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-divider"></div>
+
+            <!-- Footer -->
+            <div class="card-footer">
+                <div class="build-status">
+                    <div class="build-label">
+                        ESTADO DE CONSTRUCCIÓN
+                        <span>65%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                <button class="btn-primary">CONTINUAR ENSAMBLAJE</button>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+
+            <!-- Performance -->
+            <div class="panel-card">
+                <div class="panel-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                    RENDIMIENTO GLOBAL
+                </div>
+                <div class="perf-item">
+                    <div class="perf-meta">
+                        <span>Precisión de Código</span>
+                        <span class="perf-pct">88%</span>
+                    </div>
+                    <div class="perf-track">
+                        <div class="perf-fill" style="width:88%;"></div>
+                        <div class="perf-knob" style="left:88%;"></div>
+                    </div>
+                </div>
+                <div class="perf-item">
+                    <div class="perf-meta">
+                        <span>Tasa de Ensamblaje</span>
+                        <span class="perf-pct">42%</span>
+                    </div>
+                    <div class="perf-track">
+                        <div class="perf-fill" style="width:42%;"></div>
+                        <div class="perf-knob" style="left:42%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Logs -->
+            <div class="panel-card">
+                <div class="panel-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="4 17 10 11 4 5" />
+                        <line x1="12" y1="19" x2="20" y2="19" />
+                    </svg>
+                    TERMINAL LOGS
+                </div>
+                <div class="log-list">
+                    <div class="log-entry">
+                        <span class="log-time">[10:42:01]</span>
+                        <span class="log-msg">&gt; Inicializando puerto serial COM3...</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[10:42:05]</span>
+                        <span class="log-msg ok">&gt; OK.</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[10:45:12]</span>
+                        <span class="log-msg">&gt; Calibrando sensor IR_LEFT...</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[10:45:14]</span>
+                        <span class="log-msg warn">&gt; WARN: Valor base inestable.</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[10:46:00]</span>
+                        <span class="log-msg">&gt; Reintentando calibración...</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CourseCardComponent } from '../../components/course-card/course-card.component';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CourseCardComponent],
+  imports: [CourseCardComponent, RouterLink, RouterLinkActive],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
