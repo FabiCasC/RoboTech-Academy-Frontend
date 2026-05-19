@@ -24,7 +24,7 @@
 .page-content {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 48px 64px 96px 64px;
+
 }
 
 ::-webkit-scrollbar {

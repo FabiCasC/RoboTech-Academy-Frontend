@@ -113,7 +113,7 @@
   width: 100%;
   padding: 12px;
   background-color: transparent;
-  color: var(--text-main);
+  color: var(--accent-neon);
   border: 1px solid rgba(255, 180, 168, 0.3);
   font-family: var(--font-body);
   font-weight: 500;
@@ -128,5 +128,4 @@
 .continue-btn:hover {
   background-color: var(--accent-copper-light);
   border-color: var(--accent-neon);
-  color: var(--accent-neon);
 }

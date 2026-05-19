@@ -1,0 +1,156 @@
+<div class="profile-container">
+
+  <!-- HEADER CARD: USER MAIN SUMMARY -->
+  <div class="profile-header-card">
+    <div class="header-avatar-container">
+      <div class="avatar-glow-box">
+        <img src="perfil.png" alt="User Avatar" class="avatar-image">
+        <span class="avatar-status-pulse"></span>
+      </div>
+    </div>
+
+    <div class="header-details-container">
+      <div class="user-identity">
+        <h1 class="user-name">{{ user.name }}</h1>
+        <p class="user-role">{{ user.role }}</p>
+      </div>
+
+      <div class="sync-progress-section">
+        <div class="sync-labels">
+          <span class="sync-title">PROGRESO DE SINCRONIZACIÓN</span>
+          <span class="sync-xp-values">{{ user.xp | number }} / {{ user.maxXp | number }} XP</span>
+        </div>
+        <div class="sync-progress-track">
+          <div class="sync-progress-bar" style="width: 84.5%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-badges-container">
+      <div class="id-badge">
+        <span class="id-label">ID: {{ user.id }}</span>
+      </div>
+      <div class="rank-badge">
+        <span class="rank-label">RANGO GLOBAL</span>
+        <div class="rank-value-box">
+          <span class="material-symbols-outlined rank-icon">military_tech</span>
+          <span class="rank-value">NIVEL {{ user.level }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS GRID: 4 KEY METRICS -->
+  <div class="profile-stats-grid">
+    @for (stat of stats; track stat.title) {
+    <div class="stat-card">
+      <div class="stat-main">
+        <span class="stat-title">{{ stat.title }}</span>
+        <h2 class="stat-value">{{ stat.value }}</h2>
+
+        <!-- Optional structures inside cards -->
+        @if (stat.progressBar) {
+        <div class="stat-progress-track">
+          <div class="stat-progress-bar" [style.width.%]="stat.progressValue"></div>
+        </div>
+        } @else if (stat.activeDot) {
+        <div class="stat-activity-info">
+          <span class="active-dot-ping"></span>
+          <span class="stat-detail">{{ stat.detail }}</span>
+        </div>
+        } @else {
+        <span class="stat-detail" [class.trend-nominal]="stat.trendClass === 'trend-nominal'">
+          @if (stat.trendClass === 'trend-up') {
+          <span class="material-symbols-outlined">
+            trending_up
+          </span>
+          }
+          {{ stat.detail }}
+        </span>
+        }
+      </div>
+
+      <span class="material-symbols-outlined stat-card-icon">{{ stat.icon }}</span>
+    </div>
+    }
+  </div>
+
+  <!-- TWO COLUMNS: ACHIEVEMENTS & ACTIVITY HISTORY -->
+  <div class="profile-grid-cols">
+
+    <!-- LEFT COLUMN: INSIGNIAS Y LOGROS -->
+    <div class="col-panel achievements-panel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <span class="material-symbols-outlined panel-ico">military_tech</span>
+          <h3 class="panel-title">INSIGNIAS Y LOGROS</h3>
+        </div>
+        <a href="javascript:void(0)" class="panel-link">Ver Todos</a>
+      </div>
+
+      <div class="badges-grid">
+        @for (badge of badges; track badge.name) {
+        <div class="badge-card" [class.locked]="!badge.unlocked">
+          <div class="badge-icon-box">
+            <span class="material-symbols-outlined badge-icon">{{ badge.icon }}</span>
+          </div>
+          <span class="badge-name">{{ badge.name }}</span>
+          @if (!badge.unlocked) {
+          <span class="badge-status-label">CLASE TITANIO</span>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: HISTORIAL DE ACTIVIDAD -->
+    <div class="col-panel activity-panel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <span class="material-symbols-outlined panel-ico">history</span>
+          <h3 class="panel-title">HISTORIAL DE ACTIVIDAD</h3>
+        </div>
+        <div class="online-status">
+          <span class="online-dot"></span>
+          <span class="online-label">SISTEMA EN LÍNEA</span>
+        </div>
+      </div>
+
+      <div class="activity-list">
+        @for (log of activityLog; track log.title) {
+        <div class="activity-item">
+          <div class="activity-info">
+            <div class="activity-title-row">
+              @if (log.pulse) {
+              <span class="pulse-dot"></span>
+              } @else {
+              <span class="bullet-dot"></span>
+              }
+              <p class="activity-text">{{ log.title }}</p>
+            </div>
+            <div class="activity-meta">
+              <span class="activity-time"><span class="material-symbols-outlined time-ico">schedule</span>{{ log.time
+                }}</span>
+              <span class="meta-separator">•</span>
+              <span class="activity-tag">{{ log.tag }}</span>
+            </div>
+          </div>
+
+          <!-- Optional right elements -->
+          @if (log.xpBadge) {
+          <div class="xp-badge">{{ log.xpBadge }}</div>
+          } @else if (log.sliders) {
+          <div class="sliders-visual">
+            <span class="slider-bar" style="height: 12px;"></span>
+            <span class="slider-bar" style="height: 18px;"></span>
+            <span class="slider-bar" style="height: 8px;"></span>
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+</div>

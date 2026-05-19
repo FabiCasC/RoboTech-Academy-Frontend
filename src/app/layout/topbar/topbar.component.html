@@ -1,18 +1,25 @@
 <header class="topbar">
-  <div class="topbar-left">
-    <div class="logo">ROBOTECH_ACADEMY</div>
-  </div>
-  <div class="topbar-center">
-    <button class="action-btn">PLAY
+  <div class="logo">ROBOTECH_ACADEMY</div>
+
+  <nav class="topbar-tabs">
+    <button class="tab-btn" [class.tab-active]="activeTab === 'play'" (click)="setTab('play')">PLAY</button>
+    <button class="tab-btn" [class.tab-active]="activeTab === 'debug'" (click)="setTab('debug')">DEBUG</button>
+    <button class="tab-btn" [class.tab-active]="activeTab === 'save'" (click)="setTab('save')">SAVE</button>
+  </nav>
+
+  <div class="topbar-actions">
+    <button class="btn-3d">
+      <span class="material-symbols-outlined" style="font-size: 16px;">view_in_ar</span>
+      Cambiar a 3D
     </button>
-    <button class="action-btn outline">DEBUG
+    <button class="btn-simular">
+      <span class="material-symbols-outlined" style="font-size: 16px;">play_arrow</span>
+      SIMULAR
     </button>
-    <button class="action-btn outline">SAVE
+    <button class="btn-user" routerLink="/perfil">
+      <span class="material-symbols-outlined">
+        account_circle
+      </span>
     </button>
-  </div>
-  <div class="topbar-right">
-    <div class="profile-icon">
-      <span class="avatar-text">P</span>
-    </div>
   </div>
 </header>

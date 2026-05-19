@@ -14,17 +14,14 @@
   color: var(--text-main);
   font-family: var(--font-logo);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0 0 8px 0;
   letter-spacing: 1px;
 }
 
 .version-badge {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-muted);
-  border: 1px solid var(--border-copper);
-  padding: 4px 8px;
-  border-radius: 4px;
 }
 
 .sidebar-nav {
@@ -62,7 +59,14 @@
 }
 
 .nav-icon {
-  font-size: 18px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
 }
 
 .nav-label {
