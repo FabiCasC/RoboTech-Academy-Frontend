@@ -32,7 +32,7 @@
 
   <section class="kits-grid" aria-label="Galería de kits">
     @for (item of filteredItems; track item.id) {
-      <article class="kit-card">
+      <a class="kit-card" [routerLink]="['/components', item.id]">
         <div class="card-image-wrapper">
           <span class="category-badge">{{ item.category }}</span>
           <div
@@ -54,7 +54,7 @@
             </span>
           </div>
         </div>
-      </article>
+      </a>
     } @empty {
       <p class="empty-message">No se encontraron componentes.</p>
     }
