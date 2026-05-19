@@ -19,6 +19,10 @@ export const routes: Routes = [
       {
         path: 'perfil',
         loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent)
+      },
+      {
+        path: 'foro',
+        loadComponent: () => import('./pages/foro/foro.component').then(m => m.ForoComponent)
       }
     ]
   },
