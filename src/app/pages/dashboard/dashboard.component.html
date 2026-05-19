@@ -3,27 +3,23 @@
     <div class="header-content">
       <h1 class="page-title">STUDENT_DASHBOARD</h1>
       <div class="tabs-container">
-        <div class="tab">INVENTARIO</div>
-        <div class="tab active">CURSOS</div>
+        <button class="tab" routerLink="/proyectos" routerLinkActive="active">PROYECTOS</button>
+        <button class="tab" routerLink="/dashboard" routerLinkActive="active">CURSOS</button>
       </div>
     </div>
-    
+
     <div class="session-info">
       <span class="status-dot"></span>
       SESSION: SECURE // UID: 9945-AX
     </div>
   </div>
-  
+
   <div class="dashboard-content">
     <div class="courses-grid">
       @for (course of courses; track course.title) {
-        <app-course-card
-          [badge]="course.badge"
-          [title]="course.title"
-          [description]="course.description"
-          [progress]="course.progress"
-          [image]="course.image">
-        </app-course-card>
+      <app-course-card [badge]="course.badge" [title]="course.title" [description]="course.description"
+        [progress]="course.progress" [image]="course.image">
+      </app-course-card>
       }
     </div>
   </div>

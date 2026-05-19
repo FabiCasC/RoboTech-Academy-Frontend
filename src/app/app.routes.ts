@@ -23,6 +23,13 @@ export const routes: Routes = [
       {
         path: 'foro',
         loadComponent: () => import('./pages/foro/foro.component').then(m => m.ForoComponent)
+        path: 'proyectos',
+        loadComponent: () => import('./pages/proyectos/proyectos.component').then(m => m.ProyectosComponent)
+      },
+      {
+        path: 'components',
+        loadComponent: () =>
+          import('./pages/componentes/componentes.component').then(m => m.ComponentesComponent)
       }
     ]
   },

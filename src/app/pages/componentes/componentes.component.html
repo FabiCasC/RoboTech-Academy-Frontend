@@ -1,0 +1,62 @@
+<div class="componentes-container">
+  <header class="componentes-header">
+    <div class="header-text">
+      <h1 class="page-title">GALERÍA DE KITS</h1>
+      <p class="page-subtitle">MÓDULOS DE HARDWARE DISPONIBLES</p>
+    </div>
+
+    <div class="search-wrapper">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar componente (ej: Arduino, Sensor)..."
+        [value]="searchQuery"
+        (input)="onSearchInput($event)"
+      />
+    </div>
+  </header>
+
+  <nav class="filters-nav" aria-label="Filtrar por categoría">
+    @for (category of categories; track category) {
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="selectedCategory === category"
+        (click)="selectCategory(category)"
+      >
+        {{ category }}
+      </button>
+    }
+  </nav>
+
+  <section class="kits-grid" aria-label="Galería de kits">
+    @for (item of filteredItems; track item.id) {
+      <article class="kit-card">
+        <div class="card-image-wrapper">
+          <span class="category-badge">{{ item.category }}</span>
+          <div
+            class="card-image"
+            [style.background-image]="'url(' + item.image + ')'"
+            role="img"
+            [attr.aria-label]="item.title"
+          ></div>
+        </div>
+
+        <div class="card-body">
+          <h2 class="card-title">{{ item.title }}</h2>
+          <p class="card-description">{{ item.description }}</p>
+
+          <div class="stock-status" [class.out-of-stock]="!item.inStock">
+            <span class="stock-dot"></span>
+            <span class="stock-label">
+              {{ item.inStock ? 'EN STOCK' : 'AGOTADO' }}
+            </span>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <p class="empty-message">No se encontraron componentes.</p>
+    }
+  </section>
+</div>
