@@ -19,6 +19,10 @@ export const routes: Routes = [
       {
         path: 'perfil',
         loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent)
+      },
+      {
+        path: 'proyectos',
+        loadComponent: () => import('./pages/proyectos/proyectos.component').then(m => m.ProyectosComponent)
       }
     ]
   },
