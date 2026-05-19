@@ -1,0 +1,143 @@
+<div class="foro-container">
+  <div class="foro-grid">
+
+    <!-- LEFT/CENTER COLUMN: FEED -->
+    <div class="feed-column">
+
+      <!-- POST EDITOR CARD -->
+      <div class="post-editor-card">
+        <div class="editor-header">
+          <img [src]="currentUser.avatar" alt="Current User Avatar" class="editor-avatar">
+          <textarea placeholder="Comparte tu última simulación, prototipo o bloque de código...."></textarea>
+        </div>
+        <div class="editor-actions">
+          <div class="media-tools">
+            <button class="tool-btn" title="Add Media">
+              <span class="material-symbols-outlined">image</span>
+            </button>
+            <button class="tool-btn" title="Add Code Block">
+              <span class="material-symbols-outlined">code</span>
+            </button>
+            <button class="tool-btn" title="Add Link">
+              <span class="material-symbols-outlined">link</span>
+            </button>
+          </div>
+          <button class="btn-post">POST DATA</button>
+        </div>
+      </div>
+
+      <!-- POSTS FEED LIST -->
+      @for (post of posts; track post.title) {
+      <div class="post-card">
+        <!-- Post Header -->
+        <div class="post-header">
+          <div class="post-author-info">
+            <img [src]="post.authorAvatar" alt="Author Avatar" class="author-avatar">
+            <div class="author-meta">
+              <span class="author-name">{{ post.authorName }}</span>
+              <span class="author-title">{{ post.authorTitle }} • {{ post.time }}</span>
+            </div>
+          </div>
+          <button class="btn-more">
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+        </div>
+
+        <!-- Post Body -->
+        <div class="post-body">
+          <h2 class="post-title">{{ post.title }}</h2>
+          <p class="post-text">{{ post.content }}</p>
+
+          <div class="post-badges">
+            @for (badge of post.badges; track badge.label) {
+            <span class="post-badge">
+              <span class="badge-lbl">{{ badge.label }}:</span>
+              <span class="badge-val">{{ badge.value }}</span>
+            </span>
+            }
+          </div>
+
+          @if (post.mediaUrl) {
+          <div class="post-media-container">
+            <img [src]="post.mediaUrl" alt="Post Media Attachment" class="post-media-img">
+            <div class="live-render-tag">
+              <span class="live-dot-ping"></span>
+              <span class="live-label">LIVE RENDER</span>
+            </div>
+          </div>
+          }
+        </div>
+
+        <!-- Post Footer -->
+        <div class="post-footer">
+          <div class="footer-actions-left">
+            <button class="action-btn">
+              <span class="material-symbols-outlined action-ico">settings</span>
+              <span class="action-count">{{ post.likes }}</span>
+            </button>
+            <button class="action-btn">
+              <span class="material-symbols-outlined action-ico">chat_bubble</span>
+              <span class="action-count">{{ post.comments }}</span>
+            </button>
+          </div>
+          <button class="action-btn">
+            <span class="material-symbols-outlined action-ico">share</span>
+          </button>
+        </div>
+      </div>
+      }
+
+    </div>
+
+    <!-- RIGHT COLUMN: SIDEBAR WIDGETS -->
+    <div class="widgets-column">
+
+      <!-- TOP ENGINEERS WIDGET -->
+      <div class="widget-card top-engineers-widget">
+        <div class="widget-header">
+          <h3 class="widget-title">Top Engineers</h3>
+          <span class="material-symbols-outlined widget-header-ico">military_tech</span>
+        </div>
+        <div class="engineers-list">
+          @for (eng of topEngineers; track eng.name) {
+          <div class="engineer-row">
+            <div class="eng-profile">
+              <span class="eng-rank">{{ eng.rank }}</span>
+              @if (eng.avatar) {
+              <img [src]="eng.avatar" alt="Engineer Avatar" class="eng-avatar">
+              } @else {
+              <div class="eng-initials-avatar">{{ eng.initials }}</div>
+              }
+              <span class="eng-name">{{ eng.name }}</span>
+            </div>
+            <span class="eng-xp">{{ eng.xp }}</span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- ACTIVE BOUNTIES WIDGET -->
+      <div class="widget-card bounties-widget">
+        <div class="widget-header">
+          <h3 class="widget-title">Active Bounties</h3>
+          <span class="material-symbols-outlined widget-header-ico">track_changes</span>
+        </div>
+        <div class="bounties-list">
+          @for (bounty of bounties; track bounty.title) {
+          <div class="bounty-item-card">
+            <h4 class="bounty-item-title">{{ bounty.title }}</h4>
+            <p class="bounty-item-desc">{{ bounty.detail }}</p>
+            <div class="bounty-item-footer">
+              <span class="bounty-item-tag">{{ bounty.tag }}</span>
+              <span class="bounty-item-xp">{{ bounty.xp }}</span>
+            </div>
+          </div>
+          }
+        </div>
+        <button class="btn-view-bounties">VIEW ALL BOUNTIES</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
