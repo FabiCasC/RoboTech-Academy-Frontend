@@ -39,6 +39,13 @@ export const routes: Routes = [
           import('./pages/componentes/componente-detalle/componente-detalle.component').then(
             (m) => m.ComponenteDetalleComponent
           )
+      },
+      {
+        path: 'cursos/:courseId/leccion/:lessonId',
+        loadComponent: () =>
+          import('./pages/aprendizaje/modulo-aprendizaje/modulo-aprendizaje.component').then(
+            (m) => m.ModuloAprendizajeComponent
+          )
       }
     ]
   },
