@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,4 +8,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
-export class SidebarComponent {}
+export class SidebarComponent {
+  constructor(private router: Router) {}
+
+  isDashboardActive(): boolean {
+    return this.router.url.includes('/dashboard') || this.router.url.includes('/proyectos');
+  }
+}

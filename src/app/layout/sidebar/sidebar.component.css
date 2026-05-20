@@ -3,6 +3,7 @@
   flex-direction: column;
   height: 100%;
   padding: 32px 0;
+  font-family: var(--font-body);
 }
 
 .sidebar-header {
