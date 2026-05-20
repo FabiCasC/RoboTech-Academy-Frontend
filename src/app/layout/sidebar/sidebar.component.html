@@ -5,7 +5,7 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+    <a routerLink="/dashboard" [class.active]="isDashboardActive()" class="nav-item">
       <span class="material-symbols-outlined nav-icon">sensors</span>
       <span class="nav-label">Dashboard</span>
     </a>
