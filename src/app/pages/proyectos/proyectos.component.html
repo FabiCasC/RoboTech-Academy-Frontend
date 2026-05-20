@@ -1,17 +1,17 @@
-<div class="shell">
+<div class="projects-container">
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <div class="topbar-left">
-            <h1>DASHBOARD</h1>
-            <div class="status-pill">
-                <span class="status-dot"></span>
-                SYS.STATUS: ONLINE
+    <!-- HEADER -->
+    <div class="projects-header">
+        <div class="header-content">
+            <h1 class="page-title">DASHBOARD</h1>
+            <div class="tabs-container">
+                <button class="tab" routerLink="/proyectos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">PROYECTOS</button>
+                <button class="tab" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">CURSOS</button>
             </div>
         </div>
-        <div class="tab-group">
-            <button class="tab" routerLink="/proyectos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">PROYECTOS</button>
-            <button class="tab" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">CURSOS</button>
+        <div class="status-pill">
+            <span class="status-dot"></span>
+            SYS.STATUS: ONLINE
         </div>
     </div>
 
@@ -103,7 +103,7 @@
                         <div class="progress-fill"></div>
                     </div>
                 </div>
-                <button class="btn-primary">CONTINUAR ENSAMBLAJE</button>
+                <button class="btn-primary" routerLink="/proyectos/control">CONTINUAR ENSAMBLAJE</button>
             </div>
         </div>
 

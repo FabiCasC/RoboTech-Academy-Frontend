@@ -18,6 +18,27 @@ export const routes: Routes = [
       { path: 'foro', loadComponent: () => import('./pages/foro/foro.component').then(m => m.ForoComponent) },
       { path: 'proyectos', loadComponent: () => import('./pages/proyectos/proyectos.component').then(m => m.ProyectosComponent) },
       { path: 'components', loadComponent: () => import('./pages/componentes/componentes.component').then(m => m.ComponentesComponent) }
+      {
+        path: 'perfil',
+        loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent)
+      },
+      {
+        path: 'foro',
+        loadComponent: () => import('./pages/foro/foro.component').then(m => m.ForoComponent)
+      },
+      {
+        path: 'proyectos',
+        loadComponent: () => import('./pages/proyectos/proyectos.component').then(m => m.ProyectosComponent)
+      },
+      {
+        path: 'proyectos/control',
+        loadComponent: () => import('./pages/proyectos/control/control.component').then(m => m.ControlComponent)
+      },
+      {
+        path: 'components',
+        loadComponent: () =>
+          import('./pages/componentes/componentes.component').then(m => m.ComponentesComponent)
+      }
     ]
   },
   { path: '**', redirectTo: '/login' }

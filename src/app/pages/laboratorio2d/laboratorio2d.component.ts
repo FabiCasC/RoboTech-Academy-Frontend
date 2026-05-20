@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 export interface SchematicPort { active: boolean; }
 
@@ -26,6 +27,7 @@ export class Laboratorio2dComponent implements OnInit {
   @ViewChild('workspace') workspaceRef!: ElementRef<HTMLDivElement>;
 
   constructor(private router: Router) {}
+  constructor(private route: ActivatedRoute) {}
 
   workspaceName = 'SCHEMATIC_01';
   zoom = 100;
@@ -63,6 +65,16 @@ export class Laboratorio2dComponent implements OnInit {
   private dragMoved = false;
 
   ngOnInit(): void { this.buildConnections(); }
+  ngOnInit(): void {
+    const isNew = this.route.snapshot.queryParamMap.get('new') === 'true';
+    if (isNew) {
+      this.components = [];
+      this.connections = [];
+      this.workspaceName = 'NUEVO_ESQUEMATICO';
+    } else {
+      this.buildConnections();
+    }
+  }
 
   setTool(tool: 'pan' | 'select'): void { this.activeTool = tool; }
 
