@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
 export interface SchematicPort { active: boolean; }
@@ -25,11 +26,11 @@ export interface Telemetry { pwr: string; lat: string; status: string; }
 export class Laboratorio2dComponent implements OnInit {
   @ViewChild('workspace') workspaceRef!: ElementRef<HTMLDivElement>;
 
+  constructor(private router: Router) {}
   constructor(private route: ActivatedRoute) {}
 
   workspaceName = 'SCHEMATIC_01';
   zoom = 100;
-  activeTab: 'play' | 'debug' | 'save' = 'debug';
   activeTool: 'pan' | 'select' = 'select';
   selectedId: string | null = null;
 
@@ -60,6 +61,10 @@ export class Laboratorio2dComponent implements OnInit {
   private dragOffsetY = 0;
   private history: SchematicComponent[][] = [];
 
+  // Para distinguir drag de click
+  private dragMoved = false;
+
+  ngOnInit(): void { this.buildConnections(); }
   ngOnInit(): void {
     const isNew = this.route.snapshot.queryParamMap.get('new') === 'true';
     if (isNew) {
@@ -73,10 +78,18 @@ export class Laboratorio2dComponent implements OnInit {
 
   setTool(tool: 'pan' | 'select'): void { this.activeTool = tool; }
 
+  // Doble click en CTRL_UNIT → navega al IDE
+  openIDE(compId: string): void {
+    if (compId === 'ctrl_unit') {
+      this.router.navigate(['/ide-programacion']);
+    }
+  }
+
   startDrag(event: MouseEvent, comp: SchematicComponent): void {
     if (this.activeTool !== 'select') return;
     this.selectedId = comp.id;
     this.dragging = comp;
+    this.dragMoved = false;
     const wsRect = this.workspaceRef.nativeElement.getBoundingClientRect();
     this.dragOffsetX = event.clientX - (wsRect.left + comp.x);
     this.dragOffsetY = event.clientY - (wsRect.top + comp.y);
@@ -86,6 +99,7 @@ export class Laboratorio2dComponent implements OnInit {
 
   onMouseMove(event: MouseEvent): void {
     if (!this.dragging) return;
+    this.dragMoved = true;
     const wsRect = this.workspaceRef.nativeElement.getBoundingClientRect();
     this.dragging.x = Math.max(0, event.clientX - wsRect.left - this.dragOffsetX);
     this.dragging.y = Math.max(0, event.clientY - wsRect.top - this.dragOffsetY);
@@ -119,7 +133,6 @@ export class Laboratorio2dComponent implements OnInit {
     this.connections = [];
 
     if (ctrl && motor) {
-      // Puerto derecho de ctrl → puerto izquierdo de motor
       const x1 = ctrl.x + ctrl.w, y1 = ctrl.y + 23;
       const x2 = motor.x,         y2 = motor.y + motor.h / 2;
       const mx = (x1 + x2) / 2;
@@ -128,7 +141,6 @@ export class Laboratorio2dComponent implements OnInit {
     }
 
     if (ctrl && ir) {
-      // Puerto derecho de ctrl → puerto izquierdo de ir
       const x1 = ctrl.x + ctrl.w, y1 = ctrl.y + 55;
       const x2 = ir.x,            y2 = ir.y + ir.h / 2;
       const mx = (x1 + x2) / 2;

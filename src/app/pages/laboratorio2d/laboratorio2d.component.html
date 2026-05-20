@@ -19,62 +19,68 @@
         </div>
 
         <!-- Canvas interactivo -->
-        <div class="workspace" #workspace (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()">
+        <div class="workspace" #workspace
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()">
 
           <!-- SVG líneas de conexión -->
           <svg class="connectors-svg">
-            <path *ngFor="let c of connections" [attr.d]="c.path" stroke="#FFB4A840" stroke-width="1" fill="none"
-              stroke-dasharray="6 4" />
+            <path *ngFor="let c of connections"
+                  [attr.d]="c.path"
+                  stroke="#FFB4A840" stroke-width="1"
+                  fill="none" stroke-dasharray="6 4"/>
           </svg>
 
-          <!-- CTRL_UNIT: card grande con ports a la DERECHA -->
-          <div *ngFor="let comp of components" class="component-card" [class.selected]="comp.id === selectedId"
-            [class.card-large]="comp.id === 'ctrl_unit'" [class.card-small]="comp.id !== 'ctrl_unit'"
-            [ngStyle]="{ left: comp.x + 'px', top: comp.y + 'px', width: comp.w + 'px', height: comp.h + 'px' }"
-            (mousedown)="startDrag($event, comp)">
+          <!-- Componentes -->
+          <div *ngFor="let comp of components"
+               class="component-card"
+               [class.selected]="comp.id === selectedId"
+               [class.card-large]="comp.id === 'ctrl_unit'"
+               [class.card-small]="comp.id !== 'ctrl_unit'"
+               [class.clickable]="comp.id === 'ctrl_unit'"
+               [ngStyle]="{ left: comp.x + 'px', top: comp.y + 'px', width: comp.w + 'px', height: comp.h + 'px' }"
+               (mousedown)="startDrag($event, comp)"
+               (dblclick)="openIDE(comp.id)">
 
             <div class="card-header">
               <!-- CTRL_UNIT icon: CPU -->
-              <svg *ngIf="comp.id === 'ctrl_unit'" class="card-ico" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.5">
-                <rect x="4" y="4" width="16" height="16" rx="2" />
-                <rect x="9" y="9" width="6" height="6" />
-                <line x1="9" y1="1" x2="9" y2="4" />
-                <line x1="15" y1="1" x2="15" y2="4" />
-                <line x1="9" y1="20" x2="9" y2="23" />
-                <line x1="15" y1="20" x2="15" y2="23" />
-                <line x1="20" y1="9" x2="23" y2="9" />
-                <line x1="20" y1="14" x2="23" y2="14" />
-                <line x1="1" y1="9" x2="4" y2="9" />
-                <line x1="1" y1="14" x2="4" y2="14" />
+              <svg *ngIf="comp.id === 'ctrl_unit'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <rect x="9" y="9" width="6" height="6"/>
+                <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+                <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
               </svg>
-              <!-- MOTOR_DRV icon: barras verticales -->
-              <svg *ngIf="comp.id === 'motor_drv_a'" class="card-ico" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5">
-                <line x1="5" y1="3" x2="5" y2="21" />
-                <line x1="12" y1="3" x2="12" y2="21" />
-                <line x1="19" y1="3" x2="19" y2="21" />
+              <!-- MOTOR_DRV icon -->
+              <svg *ngIf="comp.id === 'motor_drv_a'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="3" x2="5" y2="21"/>
+                <line x1="12" y1="3" x2="12" y2="21"/>
+                <line x1="19" y1="3" x2="19" y2="21"/>
               </svg>
-              <!-- IR_SENS icon: ondas -->
-              <svg *ngIf="comp.id === 'ir_sens_01'" class="card-ico" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="2" />
-                <path d="M8.5 8.5a5 5 0 0 0 0 7" />
-                <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+              <!-- IR_SENS icon -->
+              <svg *ngIf="comp.id === 'ir_sens_01'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="2"/>
+                <path d="M8.5 8.5a5 5 0 0 0 0 7"/>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
               </svg>
               {{ comp.label }}
+
+              <!-- Hint doble click solo en CTRL_UNIT -->
+              <span *ngIf="comp.id === 'ctrl_unit'" class="ctrl-hint">2x</span>
             </div>
 
             <!-- Body solo para CTRL_UNIT -->
             <div *ngIf="comp.id === 'ctrl_unit'" class="card-body">
-              <!-- Ports a la DERECHA para CTRL_UNIT -->
               <div class="port port-right active" style="top: 17px;"></div>
-              <div class="port port-right" style="top: 49px;"></div>
-              <div class="port port-right" style="top: 81px;"></div>
+              <div class="port port-right"        style="top: 49px;"></div>
+              <div class="port port-right"        style="top: 81px;"></div>
             </div>
 
-            <!-- Port a la IZQUIERDA para componentes pequeños -->
-            <div *ngIf="comp.id !== 'ctrl_unit'" class="port port-left" [class.active]="comp.ports[0].active">
+            <!-- Port izquierdo para componentes pequeños -->
+            <div *ngIf="comp.id !== 'ctrl_unit'"
+                 class="port port-left"
+                 [class.active]="comp.ports[0].active">
             </div>
 
           </div>
@@ -96,42 +102,26 @@
             </div>
           </div>
 
-        </div><!-- /workspace -->
-
-      </div><!-- /canvas-border -->
+        </div>
+      </div>
 
       <!-- Toolbar -->
       <footer class="toolbar">
-        <!-- Mano: pan del canvas -->
         <button class="tool-btn" [class.active]="activeTool === 'pan'" (click)="setTool('pan')" title="Mover canvas">
-          <span class="material-symbols-outlined">
-            pan_tool
-          </span>
+          <span class="material-symbols-outlined">pan_tool</span>
         </button>
-        <!-- Cursor: seleccionar componentes -->
-        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')"
-          title="Seleccionar">
-          <span class="material-symbols-outlined">
-            arrow_selector_tool
-          </span>
+        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')" title="Seleccionar">
+          <span class="material-symbols-outlined">arrow_selector_tool</span>
         </button>
-
         <div class="tool-sep"></div>
-
-        <!-- Undo -->
         <button class="tool-btn" (click)="undo()" title="Deshacer">
-          <span class="material-symbols-outlined">
-            undo
-          </span>
+          <span class="material-symbols-outlined">undo</span>
         </button>
-        <!-- Delete -->
         <button class="tool-btn" (click)="deleteSelected()" title="Eliminar seleccionado">
-          <span class="material-symbols-outlined">
-            delete
-          </span>
+          <span class="material-symbols-outlined">delete</span>
         </button>
       </footer>
 
-    </div><!-- /workspace-wrap -->
-  </div><!-- /body-area -->
+    </div>
+  </div>
 </div>
