@@ -1,0 +1,76 @@
+
+<div class="ide-root">
+  <div class="bg-blur"></div>
+  <div class="bg-grid"></div>
+
+  <div class="main-content">
+    <div class="ide-panel">
+
+      <!-- IDE Header -->
+      <div class="ide-header">
+        <div class="ide-header-left">
+          <svg width="12" height="10" viewBox="0 0 24 24" fill="none" stroke="#EBBBB4" stroke-width="1.5">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          <span class="ide-filename">MAIN.CPP</span>
+          <span class="ide-live-badge">LIVE</span>
+        </div>
+        <div class="ide-header-right">
+          <button class="ide-icon-btn" title="Copiar" (click)="copiarCodigo()">
+            <svg width="10" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="9" y="9" width="13" height="13" rx="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+          <button class="ide-icon-btn" title="Pantalla completa" (click)="toggleFullscreen()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="15 3 21 3 21 9"/>
+              <polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/>
+              <line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- IDE Code Editor -->
+      <div class="ide-editor">
+
+        <!-- Números de línea -->
+        <div class="line-numbers">
+          <span *ngFor="let line of codeLines; let i = index">{{ i + 1 }}</span>
+        </div>
+
+        <!-- Área de código -->
+        <div class="code-canvas">
+          <div class="code-line" *ngFor="let line of codeLines">
+            <span [innerHTML]="line.html"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- IDE Footer -->
+      <div class="ide-footer">
+        <div class="ide-footer-left">
+          <div class="board-status">
+            <span class="board-dot"></span>
+            <span class="board-text">BOARD CONNECTED</span>
+          </div>
+          <span class="footer-divider">|</span>
+          <span class="port-text">COM3</span>
+        </div>
+        <button class="btn-upload" (click)="cargarCodigo()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          CARGAR CÓDIGO AL ROBOT
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

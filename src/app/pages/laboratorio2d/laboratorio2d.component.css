@@ -356,3 +356,33 @@
   align-items: center;
   gap: 6px;
 }
+
+/* Agregar al final del laboratorio2d.component.css */
+
+/* Cursor pointer en CTRL_UNIT para indicar que es clickeable */
+.card-large.clickable {
+  cursor: pointer;
+}
+
+.card-large.clickable:hover {
+  border-color: #FFB4A8;
+  box-shadow: 0px 0px 12px rgba(255, 180, 168, 0.2);
+}
+
+/* Hint "2x" que aparece en el header de CTRL_UNIT */
+.ctrl-hint {
+  margin-left: auto;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: #FFB4A840;
+  border: 1px solid #FFB4A820;
+  padding: 1px 4px;
+  border-radius: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.card-large.clickable:hover .ctrl-hint {
+  color: #FFB4A8;
+  border-color: #FFB4A860;
+}

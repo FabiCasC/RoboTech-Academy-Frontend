@@ -1,20 +1,18 @@
-/// <reference types="jasmine" />
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProyectosComponent } from './proyectos.component';
+import { IdeProgramacionComponent } from './ide-programacion.component';
 
-describe('ProyectosComponent', () => {
-  let component: ProyectosComponent;
-  let fixture: ComponentFixture<ProyectosComponent>;
+describe('IdeProgramacionComponent', () => {
+  let component: IdeProgramacionComponent;
+  let fixture: ComponentFixture<IdeProgramacionComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProyectosComponent]
+      imports: [IdeProgramacionComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ProyectosComponent);
+    fixture = TestBed.createComponent(IdeProgramacionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
