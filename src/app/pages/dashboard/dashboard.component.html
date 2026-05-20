@@ -16,10 +16,15 @@
 
   <div class="dashboard-content">
     <div class="courses-grid">
-      @for (course of courses; track course.title) {
-      <app-course-card [badge]="course.badge" [title]="course.title" [description]="course.description"
-        [progress]="course.progress" [image]="course.image">
-      </app-course-card>
+      @for (course of courses; track course.id) {
+        <app-course-card
+          [badge]="course.badge"
+          [title]="course.title"
+          [description]="course.description"
+          [progress]="course.progress"
+          [image]="course.image"
+          [continueLink]="course.continueLink"
+        />
       }
     </div>
   </div>

@@ -110,6 +110,7 @@
 }
 
 .continue-btn {
+  display: block;
   width: 100%;
   padding: 12px;
   background-color: transparent;
@@ -123,6 +124,8 @@
   transition: all 0.3s ease;
   border-radius: 4px;
   text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
 }
 
 .continue-btn:hover {

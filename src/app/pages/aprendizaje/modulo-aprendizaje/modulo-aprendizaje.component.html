@@ -1,0 +1,117 @@
+@if (course && activeLesson && activeModule) {
+  <div class="modulo-container">
+    <aside class="modulo-sidebar">
+      <a routerLink="/dashboard" class="back-dashboard">
+        <span class="material-symbols-outlined">arrow_back</span>
+        DASHBOARD
+      </a>
+
+      <header class="modulo-header">
+        <h1 class="modulo-title">{{ activeModule.title }}</h1>
+        <p class="modulo-subtitle">{{ activeModule.subtitle }}</p>
+      </header>
+
+      <nav class="lessons-nav" aria-label="Lecciones del módulo">
+        <ul class="lessons-list">
+          @for (lesson of lessons; track lesson.id; let i = $index) {
+            <li>
+              <button
+                type="button"
+                class="lesson-item"
+                [class.completed]="getLessonStatus(i) === 'completed'"
+                [class.active]="getLessonStatus(i) === 'active'"
+                [class.locked]="getLessonStatus(i) === 'locked'"
+                [disabled]="!isLessonClickable(i)"
+                (click)="goToLesson(lesson, i)"
+              >
+                <span class="lesson-icon material-symbols-outlined">
+                  @if (getLessonStatus(i) === 'completed') {
+                    check_circle
+                  } @else if (getLessonStatus(i) === 'active') {
+                    radio_button_checked
+                  } @else {
+                    radio_button_unchecked
+                  }
+                </span>
+                <span class="lesson-label">{{ lesson.sidebarTitle }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </nav>
+
+      <footer class="sidebar-progress">
+        <div class="progress-row">
+          <span>PROGRESO</span>
+          <span class="progress-pct">{{ moduleProgress }}%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" [style.width.%]="moduleProgress"></div>
+        </div>
+      </footer>
+    </aside>
+
+    <main class="modulo-main">
+      <span class="lesson-tag">
+        <span class="tag-dot"></span>
+        {{ activeLesson.lessonTag }}
+      </span>
+
+      <h2 class="lesson-heading">{{ activeLesson.heading }}</h2>
+
+      @for (paragraph of activeLesson.paragraphs; track paragraph) {
+        <p class="lesson-text">{{ paragraph }}</p>
+      }
+
+      @if (activeLesson.diagramTitle && activeLesson.diagramImage) {
+        <section class="diagram-card">
+          <header class="diagram-header">
+            <span class="material-symbols-outlined">account_tree</span>
+            {{ activeLesson.diagramTitle }}
+          </header>
+          <div class="diagram-image-wrap">
+            <img
+              [src]="activeLesson.diagramImage"
+              [alt]="activeLesson.diagramTitle"
+              loading="lazy"
+            />
+          </div>
+        </section>
+      }
+
+      @if (activeLesson.showComponentViewer) {
+        <section class="viewer-bar">
+          <span class="viewer-label">
+            <span class="material-symbols-outlined">view_in_ar</span>
+            VISOR DE COMPONENTES
+          </span>
+          <span class="viewer-live">
+            <span class="live-dot"></span>
+            LIVE_RENDER
+          </span>
+        </section>
+      }
+
+      <footer class="lesson-nav-footer">
+        <button
+          type="button"
+          class="nav-btn nav-prev"
+          [disabled]="!hasPrevious"
+          (click)="goPrevious()"
+        >
+          <span class="material-symbols-outlined">arrow_back</span>
+          ANTERIOR
+        </button>
+        <button
+          type="button"
+          class="nav-btn nav-next"
+          [disabled]="!hasNext"
+          (click)="goNext()"
+        >
+          SIGUIENTE
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </footer>
+    </main>
+  </div>
+}

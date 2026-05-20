@@ -38,6 +38,20 @@ export const routes: Routes = [
         path: 'components',
         loadComponent: () =>
           import('./pages/componentes/componentes.component').then(m => m.ComponentesComponent)
+      },
+      {
+        path: 'components/:id',
+        loadComponent: () =>
+          import('./pages/componentes/componente-detalle/componente-detalle.component').then(
+            (m) => m.ComponenteDetalleComponent
+          )
+      },
+      {
+        path: 'cursos/:courseId/leccion/:lessonId',
+        loadComponent: () =>
+          import('./pages/aprendizaje/modulo-aprendizaje/modulo-aprendizaje.component').then(
+            (m) => m.ModuloAprendizajeComponent
+          )
       }
     ]
   },
