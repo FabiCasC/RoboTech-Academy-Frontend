@@ -56,7 +56,7 @@
 .tab {
   background: none;
   border: none;
-  font-family: inherit;
+  font-family: var(--font-body);
   color: var(--text-muted);
   cursor: pointer;
   padding: 8px 24px;
