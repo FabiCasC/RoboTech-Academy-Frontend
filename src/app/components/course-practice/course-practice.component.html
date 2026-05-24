@@ -1,0 +1,117 @@
+<article class="practice-card">
+  <div class="practice-head">
+    <div>
+      <p class="practice-kicker">Practica</p>
+      <h3 class="practice-title">{{ practice.title }}</h3>
+      <p class="practice-description">{{ practice.description }}</p>
+    </div>
+    <div class="practice-status" [class.done]="completed">
+      <span class="status-dot"></span>
+      <span>{{ completed ? 'COMPLETADO' : 'PENDIENTE' }}</span>
+    </div>
+  </div>
+
+  @switch (practice.kind) {
+    @case ('checklist') {
+      <div class="practice-body">
+        @for (item of practice.items; track item; let index = $index) {
+          <label class="check-row">
+            <input
+              type="checkbox"
+              [checked]="checklistState()[index]"
+              (change)="setChecklistItem(index, $any($event.target).checked)"
+            />
+            <span>{{ item }}</span>
+          </label>
+        }
+      </div>
+    }
+
+    @case ('quiz') {
+      <div class="practice-body">
+        @for (question of practice.questions; track question.prompt; let qIndex = $index) {
+          <div class="quiz-block">
+            <p class="quiz-prompt">{{ qIndex + 1 }}. {{ question.prompt }}</p>
+            <div class="quiz-options">
+              @for (option of question.options; track option; let oIndex = $index) {
+                <label class="radio-row">
+                  <input
+                    type="radio"
+                    [name]="practice.id + '_' + qIndex"
+                      [checked]="quizState().answers[key(qIndex)] === oIndex"
+                    (change)="chooseQuizAnswer(qIndex, oIndex)"
+                  />
+                  <span>{{ option }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="quiz-actions">
+          <button class="action-btn" type="button" (click)="submitQuiz()">Evaluar</button>
+          @if (quizState().submitted) {
+            <div class="quiz-result" [class.ok]="completed" [class.bad]="!completed">
+              <span>Resultado:</span>
+              <strong>{{ quizState().score }}%</strong>
+              <span>{{ completed ? 'Aprobado' : 'Vuelve a intentar' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @case ('wiring') {
+      <div class="practice-body">
+        <div class="connection-table">
+          <div class="connection-row connection-head">
+            <span>Componente</span>
+            <span>Pin del componente</span>
+            <span>Seleccion</span>
+          </div>
+          @for (row of practice.rows; track row.component + row.expectedArduinoPin; let rIndex = $index) {
+            <div class="connection-row">
+              <span>{{ row.component }}</span>
+              <span>{{ row.componentPin }}</span>
+              <span>
+                <select
+                  class="select"
+                  [ngModel]="wiringState()[key(rIndex)]"
+                  (ngModelChange)="setWiringChoice(rIndex, $event)"
+                >
+                  <option value="" disabled>Selecciona...</option>
+                  @for (choice of row.choices; track choice) {
+                    <option [value]="choice">{{ choice }}</option>
+                  }
+                </select>
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @case ('state-machine') {
+      <div class="practice-body">
+        <div class="state-grid">
+          @for (c of practice.cases; track c.left + c.right; let cIndex = $index) {
+            <div class="state-card">
+              <p class="state-title">Sensores: IZQ {{ c.left }} / DER {{ c.right }}</p>
+              <select
+                class="select"
+                [ngModel]="stateMachineState()[key(cIndex)]"
+                (ngModelChange)="setStateMachineChoice(cIndex, $event)"
+              >
+                <option value="" disabled>Accion...</option>
+                @for (action of practice.actions; track action) {
+                  <option [value]="action">{{ action }}</option>
+                }
+              </select>
+              <p class="state-hint">Motor esperado: {{ c.expectedAction }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</article>

@@ -466,3 +466,115 @@
 }
 
 /* scan-line overlay disabled to match dashboard */
+
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.projects-list .project-card {
+    text-decoration: none;
+    color: inherit;
+}
+
+.pill-row {
+    display: flex;
+    gap: 8px;
+}
+
+.mini-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: rgba(255, 180, 168, 0.06);
+}
+
+.mini-pill.course {
+    border-color: var(--border-red);
+}
+
+.card-desc-clip {
+    margin-top: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.progress-fill-dim {
+    width: 35%;
+    opacity: 0.55;
+}
+
+.form-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+}
+
+.form-input {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--text);
+    padding: 10px 12px;
+    outline: none;
+    font-family: var(--body);
+}
+
+.form-area {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.form-btn {
+    width: 100%;
+    margin-top: 6px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.summary-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    background: rgba(255, 180, 168, 0.03);
+}
+
+.summary-key {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+}
+
+.summary-val {
+    margin-top: 8px;
+    font-family: var(--font-logo);
+    font-size: 24px;
+    color: var(--text);
+}

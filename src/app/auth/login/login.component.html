@@ -13,7 +13,7 @@
                 <p class="subtitle">SYSTEM_LOGIN // V2.4.1</p>
             </div>
 
-            <div class="auth-form">
+            <form class="auth-form" (ngSubmit)="onSubmit()">
                 <div class="form-group">
                     <label>CORREO_ELECTRÓNICO [EMAIL]</label>
                     <div class="input-wrapper">
@@ -22,7 +22,13 @@
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                             </path>
                         </svg>
-                        <input type="email" placeholder="enter_credentials..." />
+                        <input
+                            type="email"
+                            name="email"
+                            [(ngModel)]="email"
+                            placeholder="enter_credentials..."
+                            autocomplete="username"
+                        />
                     </div>
                 </div>
 
@@ -34,14 +40,30 @@
                                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                             </path>
                         </svg>
-                        <input type="password" placeholder="********" />
+                        <input
+                            type="password"
+                            name="password"
+                            [(ngModel)]="password"
+                            placeholder="********"
+                            autocomplete="current-password"
+                        />
                     </div>
                     <div class="forgot-link">
                         <a href="javascript:void(0)">¿OLVIDASTE TU CONTRASEÑA?</a>
                     </div>
                 </div>
 
-                <button class="submit-btn">
+                <div class="temp-admin-box">
+                    <p class="temp-admin-title">ADMIN TEMPORAL</p>
+                    <p><strong>Email:</strong> {{ temporaryAdmin.email }}</p>
+                    <p><strong>Clave:</strong> {{ temporaryAdmin.password }}</p>
+                </div>
+
+                @if (errorMessage) {
+                    <p class="error-message">{{ errorMessage }}</p>
+                }
+
+                <button class="submit-btn" type="submit">
                     INICIAR SESIÓN
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -53,7 +75,7 @@
                     <p>¿AÚN NO ESTÁS REGISTRADO?</p>
                     <a routerLink="/register">CREAR UNA CUENTA</a>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 

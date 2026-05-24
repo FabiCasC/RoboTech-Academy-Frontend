@@ -1,0 +1,238 @@
+.practice-card {
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 180, 168, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.practice-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.practice-kicker {
+  margin: 0 0 8px;
+  color: var(--accent-neon);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+}
+
+.practice-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--text-main);
+}
+
+.practice-description {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.practice-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 180, 168, 0.18);
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.practice-status.done {
+  border-color: rgba(0, 255, 0, 0.25);
+  color: #A7F3D0;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFB4A8;
+  box-shadow: 0 0 10px rgba(255, 180, 168, 0.45);
+}
+
+.practice-status.done .status-dot {
+  background: #00FF88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+}
+
+.practice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.check-row,
+.radio-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-main);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.check-row input,
+.radio-row input {
+  margin-top: 4px;
+}
+
+.quiz-block {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 180, 168, 0.1);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.quiz-prompt {
+  margin: 0 0 12px;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 180, 168, 0.22);
+  background: rgba(255, 180, 168, 0.08);
+  color: var(--accent-neon);
+  font-family: var(--font-body);
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.action-btn:hover {
+  background: rgba(255, 180, 168, 0.14);
+}
+
+.quiz-result {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 180, 168, 0.2);
+  color: var(--text-muted);
+}
+
+.quiz-result.ok {
+  border-color: rgba(0, 255, 0, 0.25);
+  color: #A7F3D0;
+}
+
+.quiz-result.bad {
+  border-color: rgba(255, 0, 0, 0.25);
+  color: #FCA5A5;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 180, 168, 0.18);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--text-main);
+  font-family: var(--font-body);
+}
+
+.select:focus {
+  outline: none;
+  border-color: rgba(255, 180, 168, 0.42);
+}
+
+.connection-table {
+  border: 1px solid rgba(255, 180, 168, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.connection-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 180, 168, 0.08);
+}
+
+.connection-row:last-child {
+  border-bottom: none;
+}
+
+.connection-head {
+  background: rgba(255, 180, 168, 0.08);
+  color: var(--accent-neon);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.state-card {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 180, 168, 0.1);
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.state-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 13px;
+  letter-spacing: 0.6px;
+}
+
+.state-hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .practice-head {
+    flex-direction: column;
+  }
+
+  .connection-row {
+    grid-template-columns: 1fr;
+  }
+
+  .state-grid {
+    grid-template-columns: 1fr;
+  }
+}

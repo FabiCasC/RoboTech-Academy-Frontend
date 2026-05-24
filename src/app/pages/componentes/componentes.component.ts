@@ -16,7 +16,10 @@ export class ComponentesComponent {
     'MICROCONTROLADOR',
     'SENSOR',
     'ACTUADOR',
-    'CONECTIVIDAD'
+    'CONECTIVIDAD',
+    'ENERGIA',
+    'MECANICA',
+    'CABLEADO'
   ] as const;
 
   selectedCategory: (typeof this.categories)[number] = 'TODOS';

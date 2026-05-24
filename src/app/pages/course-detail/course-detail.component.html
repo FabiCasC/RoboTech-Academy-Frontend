@@ -1,0 +1,178 @@
+@if (course; as selectedCourse) {
+  <div class="course-detail">
+    <a class="back-link" routerLink="/dashboard">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver al dashboard
+    </a>
+
+    <section class="hero-card">
+      <div class="hero-copy">
+        <span class="hero-badge">{{ selectedCourse.badge }}</span>
+        <h1>{{ selectedCourse.title }}</h1>
+        <p class="hero-subtitle">{{ selectedCourse.subtitle }}</p>
+        <p class="hero-overview">{{ selectedCourse.overview }}</p>
+
+        <div class="hero-meta">
+          <div class="meta-box">
+            <span>PROGRESO</span>
+            <strong>{{ getProgressPercent(selectedCourse) }}%</strong>
+          </div>
+          <div class="meta-box">
+            <span>MODULOS</span>
+            <strong>{{ selectedCourse.modules.length }}</strong>
+          </div>
+          <div class="meta-box">
+            <span>ENTREGABLES</span>
+            <strong>{{ selectedCourse.project.deliverables.length }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" [style.background-image]="'url(' + selectedCourse.image + ')'"></div>
+    </section>
+
+    <section class="content-grid">
+      <article class="modules-panel">
+        <div class="section-header">
+          <p class="section-kicker">Ruta de aprendizaje</p>
+          <h2>Modulos del curso</h2>
+        </div>
+
+        <div class="module-list">
+          @for (module of selectedCourse.modules; track module.title; let index = $index) {
+            <article class="module-card">
+              <div class="module-top">
+                <span class="module-index">M{{ index + 1 }}</span>
+                <span class="module-duration">{{ module.duration }}</span>
+              </div>
+              <h3>{{ module.title }}</h3>
+              <p>{{ module.summary }}</p>
+
+              <div class="lesson-list">
+                @for (lesson of module.lessons; track lesson) {
+                  <div class="lesson-item">
+                    <span class="lesson-dot"></span>
+                    <span>{{ lesson }}</span>
+                  </div>
+                }
+              </div>
+
+              @if (module.practices.length) {
+                <div class="practice-list">
+                  @for (practice of module.practices; track practice.id) {
+                    <app-course-practice
+                      [courseSlug]="selectedCourse.slug"
+                      [practice]="practice"
+                      (changed)="onPracticeChanged()"
+                    />
+                  }
+                </div>
+              }
+            </article>
+          }
+        </div>
+      </article>
+
+      <aside class="project-panel">
+        <div class="section-header">
+          <p class="section-kicker">Aplicacion practica</p>
+          <h2>{{ selectedCourse.project.title }}</h2>
+        </div>
+
+        <p class="project-objective">{{ selectedCourse.project.objective }}</p>
+
+        <div class="info-block">
+          <h3>Entregables</h3>
+          @for (item of selectedCourse.project.deliverables; track item) {
+            <div class="list-row">
+              <span class="list-accent"></span>
+              <span>{{ item }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="info-block">
+          <h3>Herramientas sugeridas</h3>
+          <div class="tool-tags">
+            @for (tool of selectedCourse.project.tools; track tool) {
+              <span class="tool-tag">{{ tool }}</span>
+            }
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    @if (selectedCourse.specs; as specs) {
+      <section class="technical-grid">
+        <article class="detail-panel wide-panel">
+          <div class="section-header">
+            <p class="section-kicker">Proyecto educativo</p>
+            <h2>{{ specs.introTitle }}</h2>
+          </div>
+
+          <p class="project-objective">{{ specs.introText }}</p>
+          <p class="reference-video">{{ specs.referenceVideo }}</p>
+        </article>
+
+        <article class="detail-panel">
+          <div class="section-header">
+            <p class="section-kicker">Bill of Materials</p>
+            <h2>{{ specs.materialsTitle }}</h2>
+          </div>
+
+          <div class="spec-group-list">
+            @for (group of specs.materialsGroups; track group.title) {
+              <div class="spec-group">
+                <h3>{{ group.title }}</h3>
+                @for (item of group.items; track item) {
+                  <div class="list-row">
+                    <span class="list-accent"></span>
+                    <span>{{ item }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </article>
+
+        <article class="detail-panel wide-panel">
+          <div class="section-header">
+            <p class="section-kicker">Vista 2D</p>
+            <h2>{{ specs.connectionsTitle }}</h2>
+          </div>
+
+          <div class="connection-table">
+            <div class="connection-row connection-head">
+              <span>Componente</span>
+              <span>Pin del componente</span>
+              <span>Pin en Arduino</span>
+            </div>
+            @for (connection of specs.connections; track connection.component + connection.arduinoPin) {
+              <div class="connection-row">
+                <span>{{ connection.component }}</span>
+                <span>{{ connection.componentPin }}</span>
+                <span>{{ connection.arduinoPin }}</span>
+              </div>
+            }
+          </div>
+        </article>
+
+        <article class="detail-panel wide-panel">
+          <div class="section-header">
+            <p class="section-kicker">IDE y simulacion</p>
+            <h2>{{ specs.controlTitle }}</h2>
+          </div>
+
+          <div class="state-grid">
+            @for (state of specs.controlStates; track state.state) {
+              <div class="state-card">
+                <h3>{{ state.state }}</h3>
+                <p>{{ state.behavior }}</p>
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+    }
+  </div>
+}

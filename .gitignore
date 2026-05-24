@@ -40,3 +40,13 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Local repair/backup folders (no deben versionarse)
+/_remote_clean/
+/_local_backup_*/
+
+# Carpetas duplicadas creadas durante la reparacion (no usadas por imports)
+/src/app/auth/login/login/
+/src/app/components/course-card/course-card/
+/src/app/layout/topbar/topbar/
+/src/app/pages/dashboard/dashboard/

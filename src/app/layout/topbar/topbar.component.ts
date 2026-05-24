@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -13,7 +14,10 @@ import { filter } from 'rxjs/operators';
 export class TopbarComponent {
   activeTab: 'play' | 'debug' | 'save' | null = 'play';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     // Escuchar cambios de ruta para deseleccionar pestañas en Dashboard
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -38,5 +42,10 @@ export class TopbarComponent {
     if (this.router.url.includes('/laboratorio2d')) {
       this.activeTab = tab;
     }
+  }
+
+  logout(): void {
+    this.authService.logout();
+    void this.router.navigate(['/login']);
   }
 }

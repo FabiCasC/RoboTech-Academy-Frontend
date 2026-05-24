@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ThreeKitViewerComponent } from '../../../components/three-kit-viewer/three-kit-viewer.component';
 import { KitDetail, KitItem } from '../models/kit.models';
 import { getKitItemById } from '../data/kit-catalog.data';
 import { getKitDetailById } from '../data/kit-details.data';
@@ -7,7 +8,7 @@ import { getKitDetailById } from '../data/kit-details.data';
 @Component({
   selector: 'app-componente-detalle',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ThreeKitViewerComponent],
   templateUrl: './componente-detalle.component.html',
   styleUrl: './componente-detalle.component.css'
 })
@@ -56,6 +57,9 @@ export class ComponenteDetalleComponent {
   }
 
   addToLab(): void {
-    // Integración futura con el laboratorio
+    if (!this.item) return;
+    void this.router.navigate(['/laboratorio2d'], {
+      queryParams: { add: this.item.id }
+    });
   }
 }

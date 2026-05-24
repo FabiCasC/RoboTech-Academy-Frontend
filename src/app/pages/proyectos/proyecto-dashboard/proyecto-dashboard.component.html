@@ -1,0 +1,88 @@
+@if (project) {
+  <div class="project-shell">
+    <header class="project-header">
+      <button type="button" class="back-link" (click)="backToProjects()">
+        <span class="material-symbols-outlined">arrow_back</span>
+        PROYECTOS
+      </button>
+
+      <div class="header-right">
+        <span class="kind-pill">{{ kindLabel }}</span>
+      </div>
+    </header>
+
+    <section class="project-card">
+      <div class="card-top">
+        <div class="title-block">
+          @if (project.kind === 'COURSE') {
+            <h1 class="project-title">{{ project.title }}</h1>
+            <p class="project-sub">Curso: {{ courseTitle }}</p>
+          } @else {
+            <h1 class="project-title">LAB LIBRE</h1>
+          }
+        </div>
+        <div class="meta">
+          <div class="meta-row">
+            <span class="meta-key">ID</span>
+            <span class="meta-val">{{ project.id }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key">ACTUALIZADO</span>
+            <span class="meta-val">{{ project.updatedAt | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      @if (project.kind === 'COURSE') {
+        <div class="info-grid">
+          <article class="info-panel">
+            <div class="panel-label">DESCRIPCION</div>
+            <p class="panel-text">{{ project.description }}</p>
+          </article>
+          <article class="info-panel">
+            <div class="panel-label">RELACION</div>
+            <p class="panel-text">Este proyecto esta vinculado a un curso, por eso su descripcion es fija.</p>
+            @if (courseLink) {
+              <a class="link-btn" [routerLink]="courseLink">
+                VER CURSO
+                <span class="material-symbols-outlined">chevron_right</span>
+              </a>
+            }
+          </article>
+        </div>
+      } @else {
+        <div class="info-grid">
+          <article class="info-panel">
+            <div class="panel-label">TITULO</div>
+            <input class="field" [(ngModel)]="titleDraft" placeholder="Ej: Mi seguidor de linea v1"/>
+          </article>
+          <article class="info-panel">
+            <div class="panel-label">DESCRIPCION</div>
+            <textarea class="field field-area" [(ngModel)]="descriptionDraft" placeholder="Describe el objetivo del lab..."></textarea>
+          </article>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-secondary" (click)="saveFree()">GUARDAR</button>
+        </div>
+      }
+
+      <div class="divider"></div>
+
+      <div class="footer">
+        <button type="button" class="btn-primary" (click)="continueAssembly()">
+          CONTINUAR ENSAMBLAJE
+        </button>
+      </div>
+    </section>
+  </div>
+} @else {
+  <div class="missing">
+    <div class="missing-card">
+      <div class="missing-title">Proyecto no encontrado</div>
+      <button type="button" class="btn-primary" (click)="backToProjects()">VOLVER</button>
+    </div>
+  </div>
+}
+

@@ -2,7 +2,10 @@ export type KitCategory =
   | 'MICROCONTROLADOR'
   | 'SENSOR'
   | 'ACTUADOR'
-  | 'CONECTIVIDAD';
+  | 'CONECTIVIDAD'
+  | 'ENERGIA'
+  | 'MECANICA'
+  | 'CABLEADO';
 
 export interface KitItem {
   id: string;

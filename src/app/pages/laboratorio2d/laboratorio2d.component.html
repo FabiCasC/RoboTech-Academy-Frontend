@@ -2,6 +2,37 @@
 
   <div class="body-area">
 
+    <aside class="palette">
+      <div class="palette-head">
+        <div class="palette-title">COMPONENTS KIT</div>
+        <div class="palette-sub">Arrastra o agrega al workspace</div>
+      </div>
+
+      <div class="palette-preview">
+        <app-three-kit-viewer *ngIf="selectedKitId" [kitId]="selectedKitId"></app-three-kit-viewer>
+      </div>
+
+      <div class="palette-actions">
+        <button type="button" class="palette-btn" (click)="addSelectedKit()" [disabled]="!selectedKitId">
+          <span class="material-symbols-outlined">add</span>
+          AGREGAR
+        </button>
+      </div>
+
+      <div class="palette-list">
+        <button
+          type="button"
+          class="palette-item"
+          *ngFor="let item of kitItems"
+          [class.active]="item.id === selectedKitId"
+          (click)="selectKit(item.id)"
+        >
+          <div class="palette-item-title">{{ item.title }}</div>
+          <div class="palette-item-meta">{{ item.category }}</div>
+        </button>
+      </div>
+    </aside>
+
     <!-- WORKSPACE -->
     <div class="workspace-wrap">
       <div class="canvas-border">
@@ -35,16 +66,16 @@
           <div *ngFor="let comp of components"
                class="component-card"
                [class.selected]="comp.id === selectedId"
-               [class.card-large]="comp.id === 'ctrl_unit'"
-               [class.card-small]="comp.id !== 'ctrl_unit'"
-               [class.clickable]="comp.id === 'ctrl_unit'"
+               [class.card-large]="comp.kitId === 'arduino-uno-r3'"
+               [class.card-small]="comp.kitId !== 'arduino-uno-r3'"
+               [class.clickable]="comp.kitId === 'arduino-uno-r3'"
                [ngStyle]="{ left: comp.x + 'px', top: comp.y + 'px', width: comp.w + 'px', height: comp.h + 'px' }"
                (mousedown)="startDrag($event, comp)"
                (dblclick)="openIDE(comp.id)">
 
             <div class="card-header">
               <!-- CTRL_UNIT icon: CPU -->
-              <svg *ngIf="comp.id === 'ctrl_unit'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg *ngIf="comp.kitId === 'arduino-uno-r3'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="4" y="4" width="16" height="16" rx="2"/>
                 <rect x="9" y="9" width="6" height="6"/>
                 <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
@@ -53,32 +84,38 @@
                 <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
               </svg>
               <!-- MOTOR_DRV icon -->
-              <svg *ngIf="comp.id === 'motor_drv_a'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <svg *ngIf="comp.kitId === 'l298n'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="5" y1="3" x2="5" y2="21"/>
                 <line x1="12" y1="3" x2="12" y2="21"/>
                 <line x1="19" y1="3" x2="19" y2="21"/>
               </svg>
               <!-- IR_SENS icon -->
-              <svg *ngIf="comp.id === 'ir_sens_01'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg *ngIf="comp.kitId === 'tcrt5000'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <circle cx="12" cy="12" r="2"/>
                 <path d="M8.5 8.5a5 5 0 0 0 0 7"/>
                 <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
               </svg>
+              <span
+                *ngIf="comp.kitId !== 'arduino-uno-r3' && comp.kitId !== 'l298n' && comp.kitId !== 'tcrt5000'"
+                class="material-symbols-outlined card-ico material-ico"
+              >
+                extension
+              </span>
               {{ comp.label }}
 
               <!-- Hint doble click solo en CTRL_UNIT -->
-              <span *ngIf="comp.id === 'ctrl_unit'" class="ctrl-hint">2x</span>
+              <span *ngIf="comp.kitId === 'arduino-uno-r3'" class="ctrl-hint">2x</span>
             </div>
 
             <!-- Body solo para CTRL_UNIT -->
-            <div *ngIf="comp.id === 'ctrl_unit'" class="card-body">
+            <div *ngIf="comp.kitId === 'arduino-uno-r3'" class="card-body">
               <div class="port port-right active" style="top: 17px;"></div>
               <div class="port port-right"        style="top: 49px;"></div>
               <div class="port port-right"        style="top: 81px;"></div>
             </div>
 
             <!-- Port izquierdo para componentes pequeños -->
-            <div *ngIf="comp.id !== 'ctrl_unit'"
+            <div *ngIf="comp.kitId !== 'arduino-uno-r3' && comp.ports.length > 0"
                  class="port port-left"
                  [class.active]="comp.ports[0].active">
             </div>

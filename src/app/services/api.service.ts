@@ -1,13 +1,64 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+
+export type ProjectCreateBody = {
+  title: string;
+  description: string;
+};
+
+export type ProjectPatchBody = {
+  title?: string;
+  description?: string;
+};
+
+export type WorkspaceDto = {
+  components: any[];
+  connections: any[];
+};
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private url = 'http://localhost:8080/api/v1/proyectos';
-
   constructor(private http: HttpClient) {}
 
-  getGuiaSeguidor() {
-    return this.http.get(`${this.url}/seguidor-linea`, { responseType: 'text' });
+  getKitCatalog() {
+    return this.http.get(`${environment.API_BASE_URL}/kit/catalog`);
+  }
+
+  getKitDetails(id: string) {
+    return this.http.get(`${environment.API_BASE_URL}/kit/details/${encodeURIComponent(id)}`);
+  }
+
+  getMe() {
+    return this.http.get(`${environment.API_BASE_URL}/auth/me`);
+  }
+
+  listProjects() {
+    return this.http.get(`${environment.API_BASE_URL}/projects`);
+  }
+
+  createProject(body: ProjectCreateBody) {
+    return this.http.post(`${environment.API_BASE_URL}/projects`, body);
+  }
+
+  getProjectById(id: string) {
+    return this.http.get(`${environment.API_BASE_URL}/projects/${encodeURIComponent(id)}`);
+  }
+
+  patchProject(id: string, body: ProjectPatchBody) {
+    return this.http.patch(`${environment.API_BASE_URL}/projects/${encodeURIComponent(id)}`, body);
+  }
+
+  getProjectWorkspace(id: string) {
+    return this.http.get<WorkspaceDto>(
+      `${environment.API_BASE_URL}/projects/${encodeURIComponent(id)}/workspace`
+    );
+  }
+
+  putProjectWorkspace(id: string, body: WorkspaceDto) {
+    return this.http.put<WorkspaceDto>(
+      `${environment.API_BASE_URL}/projects/${encodeURIComponent(id)}/workspace`,
+      body
+    );
   }
 }
