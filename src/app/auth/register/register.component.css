@@ -80,7 +80,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 40px 60px;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
   background-color: #0c0c0c;
   overflow-y: auto;
 }
@@ -258,4 +260,82 @@
   .auth-left {
     display: none;
   }
+}
+
+/* Material glass (registro) */
+.glass-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(18, 18, 18, 0.72) !important;
+  border: 1px solid rgba(255, 180, 168, 0.22) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #e8e8e8 !important;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.field-icon {
+  color: #ffb4a8 !important;
+  margin-right: 8px;
+}
+
+.actions-row {
+  margin-top: 12px;
+}
+
+.submit-btn-mat {
+  width: 100%;
+  min-height: 48px;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  background: linear-gradient(135deg, #c00100, #8b0000) !important;
+  color: #fff !important;
+}
+
+.btn-spinner circle {
+  stroke: #fff !important;
+}
+
+.alert-error {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 80, 80, 0.45);
+  background: rgba(80, 20, 20, 0.35);
+  color: #ffb4b4;
+  font-size: 0.85rem;
+}
+
+.alert-success {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(80, 255, 180, 0.35);
+  background: rgba(20, 60, 40, 0.35);
+  color: #b4ffd9;
+  font-size: 0.85rem;
+}
+
+::ng-deep .glass-card .mat-mdc-text-field-wrapper {
+  background: rgba(10, 10, 10, 0.85) !important;
+}
+
+::ng-deep .glass-card .mdc-notched-outline__leading,
+::ng-deep .glass-card .mdc-notched-outline__notch,
+::ng-deep .glass-card .mdc-notched-outline__trailing {
+  border-color: rgba(255, 180, 168, 0.25) !important;
+}
+
+::ng-deep .glass-card .mat-mdc-input-element {
+  color: #f0f0f0 !important;
 }

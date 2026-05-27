@@ -3,12 +3,13 @@ import { CourseCardComponent } from '../../components/course-card/course-card.co
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { COURSE_CATALOG, type Course } from '../../data/course-catalog';
 import { CourseProgressService } from '../../services/course-progress.service';
+import { EstudianteFlowComponent } from '../../features/estudiante/estudiante-flow.component';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CourseCardComponent, RouterLink, RouterLinkActive],
+  imports: [CourseCardComponent, RouterLink, RouterLinkActive, EstudianteFlowComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

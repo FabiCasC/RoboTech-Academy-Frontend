@@ -267,3 +267,42 @@
 }
 
 .btn-upload:hover { background: #a00100; border-color: #a00100; }
+
+.sys-validation-panel {
+  margin: 0 16px 12px;
+  padding: 12px 14px;
+  border: 1px solid #ff6b6b50;
+  background: rgba(255, 60, 60, 0.06);
+  font-size: 11px;
+  color: #ebbbb4;
+}
+
+.sys-validation-panel.valid {
+  border-color: #6bffb450;
+  background: rgba(107, 255, 180, 0.06);
+}
+
+.sys-panel-title {
+  display: block;
+  color: #ffb4a8;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  font-size: 10px;
+}
+
+.sys-err {
+  color: #ff8a8a;
+  margin: 4px 0 0;
+}
+
+.sys-warn {
+  color: #ffb44a;
+  margin: 4px 0 0;
+}
+
+.upload-msg {
+  font-size: 11px;
+  color: #ffb4a8;
+  margin-right: 12px;
+  max-width: 280px;
+}

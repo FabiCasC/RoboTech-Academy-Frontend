@@ -1,0 +1,48 @@
+<div class="sys-root">
+  <header class="sys-header">
+    <div>
+      <p class="sys-badge">{{ profile.code }}-ROLE · SISTEMA AUTOMATIZADO</p>
+      <h1>MONITOREO_MOTORES_SYS</h1>
+      <p class="sys-desc">{{ profile.description }}</p>
+    </div>
+    <div class="sys-actions">
+      <button type="button" class="sys-btn" (click)="runHardwareDemo()">Probar hardware</button>
+      <button type="button" class="sys-btn" (click)="runSoftwareDemo()">Probar IDE</button>
+      <button type="button" class="sys-btn ghost" (click)="clearLog()">Limpiar log</button>
+    </div>
+  </header>
+
+  <section class="engines-grid">
+    @for (eng of engines; track eng.id) {
+      <article class="engine-card">
+        <h2>{{ eng.title }}</h2>
+        <p>{{ eng.desc }}</p>
+        @if (getLastEvent(eng.id); as last) {
+          <div class="last-event" [class]="last.status">
+            <span class="material-symbols-outlined">{{ statusIcon(last.status) }}</span>
+            <span>{{ last.detail }}</span>
+          </div>
+        } @else {
+          <p class="idle">Sin eventos recientes</p>
+        }
+      </article>
+    }
+  </section>
+
+  <section class="log-section">
+    <h2>LOG DE ORQUESTACIÓN</h2>
+    <div class="log-list">
+      @if (events().length === 0) {
+        <p class="empty">Ejecuta acciones en el laboratorio o IDE para ver eventos SYS.</p>
+      }
+      @for (ev of events(); track ev.timestamp) {
+        <div class="log-row" [class]="ev.status">
+          <span class="log-time">{{ ev.timestamp | date: 'HH:mm:ss' }}</span>
+          <span class="log-engine">{{ ev.engine }}</span>
+          <span class="log-action">{{ ev.action }}</span>
+          <span class="log-detail">{{ ev.detail }}</span>
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -51,6 +51,19 @@
 
       </div>
 
+      @if (validationReport) {
+        <div class="sys-validation-panel" [class.valid]="validationReport.valid">
+          <span class="sys-panel-title">SYS-ROLE · ANALIZADOR SINTÁCTICO</span>
+          <span>Score {{ validationReport.score }}%</span>
+          @for (err of validationReport.errors; track err) {
+            <p class="sys-err">{{ err }}</p>
+          }
+          @for (warn of validationReport.warnings; track warn) {
+            <p class="sys-warn">{{ warn }}</p>
+          }
+        </div>
+      }
+
       <!-- IDE Footer -->
       <div class="ide-footer">
         <div class="ide-footer-left">
@@ -61,6 +74,9 @@
           <span class="footer-divider">|</span>
           <span class="port-text">COM3</span>
         </div>
+        @if (uploadMessage) {
+          <span class="upload-msg">{{ uploadMessage }}</span>
+        }
         <button class="btn-upload" (click)="cargarCodigo()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

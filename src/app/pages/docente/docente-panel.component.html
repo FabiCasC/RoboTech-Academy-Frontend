@@ -1,0 +1,101 @@
+<div class="doc-root">
+  <header class="doc-header">
+    <div>
+      <p class="doc-badge">{{ profile.code }}-ROLE · DOCENTE ASIGNADO</p>
+      <h1>PANEL_ANALÍTICO_DOCENTE</h1>
+      <p class="doc-sub">
+        Seguimiento académico · {{ session?.displayName }}
+      </p>
+    </div>
+    <a routerLink="/sistema" class="doc-link-sys">
+      <span class="material-symbols-outlined">hub</span>
+      Ver motores SYS
+    </a>
+  </header>
+
+  <section class="kpi-grid">
+    <article class="kpi-card">
+      <span class="kpi-label">ESTUDIANTES</span>
+      <span class="kpi-value">{{ kpis.totalStudents }}</span>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">PROGRESO MEDIO</span>
+      <span class="kpi-value">{{ kpis.avgProgress }}%</span>
+    </article>
+    <article class="kpi-card warn">
+      <span class="kpi-label">EN RIESGO / INACTIVOS</span>
+      <span class="kpi-value">{{ kpis.atRisk }}</span>
+    </article>
+    <article class="kpi-card ok">
+      <span class="kpi-label">ACTIVOS HOY</span>
+      <span class="kpi-value">{{ kpis.activeToday }}</span>
+    </article>
+  </section>
+
+  <section class="sections-block">
+    <h2>SECCIONES</h2>
+    <div class="section-chips">
+      <button
+        type="button"
+        class="chip"
+        [class.active]="selectedSection() === null"
+        (click)="selectSection(null)"
+      >
+        Todas
+      </button>
+      @for (sec of sections; track sec.id) {
+        <button
+          type="button"
+          class="chip"
+          [class.active]="selectedSection() === sec.id"
+          (click)="selectSection(sec.id)"
+        >
+          {{ sec.name }} · {{ sec.avgProgress }}%
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="table-block">
+    <h2>MÉTRICAS POR ESTUDIANTE</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ALUMNO</th>
+            <th>SECCIÓN</th>
+            <th>PROGRESO</th>
+            <th>LAB</th>
+            <th>IDE</th>
+            <th>ÚLTIMA ACT.</th>
+            <th>ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (st of students; track st.id) {
+            <tr>
+              <td>{{ st.id }}</td>
+              <td>{{ st.name }}</td>
+              <td>{{ st.section }}</td>
+              <td>
+                <div class="progress-cell">
+                  <div class="progress-bar" [style.width.%]="st.progressPercent"></div>
+                  <span>{{ st.progressPercent }}%</span>
+                </div>
+              </td>
+              <td>{{ st.labSessions }}</td>
+              <td>{{ st.ideCompilations }}</td>
+              <td>{{ st.lastActive }}</td>
+              <td>
+                <span class="status-pill" [class]="st.status">
+                  {{ statusLabel(st.status) }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

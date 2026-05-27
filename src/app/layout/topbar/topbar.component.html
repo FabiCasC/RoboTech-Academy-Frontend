@@ -1,11 +1,18 @@
 <header class="topbar">
-  <div class="logo">ROBOTECH_ACADEMY</div>
+  <div class="logo-wrap">
+    <div class="logo">ROBOTECH_ACADEMY</div>
+    @if (roleProfile) {
+      <span class="topbar-role">{{ roleProfile.code }}-ROLE</span>
+    }
+  </div>
 
+  @if (showLabTabs()) {
   <nav class="topbar-tabs">
     <button class="tab-btn" [class.tab-active]="activeTab === 'play'" (click)="setTab('play')">PLAY</button>
     <button class="tab-btn" [class.tab-active]="activeTab === 'debug'" (click)="setTab('debug')">DEBUG</button>
     <button class="tab-btn" [class.tab-active]="activeTab === 'save'" (click)="setTab('save')">SAVE</button>
   </nav>
+  }
 
   <div class="topbar-actions">
     <button class="btn-3d">

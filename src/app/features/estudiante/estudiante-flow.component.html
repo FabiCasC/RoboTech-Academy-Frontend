@@ -1,0 +1,17 @@
+<section class="flow-root">
+  <header>
+    <p class="flow-badge">{{ profile.code }}-ROLE · APRENDIZAJE AUTÓNOMO</p>
+    <h2>FLUJO_DE_APRENDIZAJE</h2>
+    <p class="flow-desc">{{ profile.description }}</p>
+  </header>
+  <div class="flow-steps">
+    @for (step of steps; track step.n) {
+      <a [routerLink]="step.link" class="flow-step">
+        <span class="material-symbols-outlined step-icon">{{ step.icon }}</span>
+        <span class="step-n">{{ step.n }}</span>
+        <span class="step-title">{{ step.title }}</span>
+        <span class="step-desc">{{ step.desc }}</span>
+      </a>
+    }
+  </div>
+</section>

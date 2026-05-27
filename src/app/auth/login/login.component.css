@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-.auth-container {
+.auth-page {
   display: flex;
   width: 100vw;
   height: 100vh;
@@ -155,6 +155,61 @@
   opacity: 0.8;
 }
 
+.demo-accounts {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: rgba(20, 20, 20, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo-title {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: #ffb4a8;
+  margin-bottom: 4px;
+}
+
+.demo-row {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px 10px;
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  background: #111;
+  color: #ccc;
+  cursor: pointer;
+  width: 100%;
+}
+
+.demo-row:hover {
+  border-color: #ffb4a8;
+}
+
+.demo-role {
+  grid-row: span 2;
+  font-size: 10px;
+  color: #ffb4a8;
+  letter-spacing: 0.6px;
+  align-self: center;
+}
+
+.demo-name {
+  font-size: 12px;
+  color: #fff;
+}
+
+.demo-email {
+  font-size: 11px;
+  color: #888;
+}
+
 .temp-admin-box {
   background-color: rgba(220, 38, 38, 0.12);
   border: 1px solid rgba(255, 180, 168, 0.3);
@@ -278,11 +333,181 @@
 }
 
 @media (max-width: 900px) {
-  .auth-container {
+  .auth-page {
     flex-direction: column;
   }
 
   .auth-left {
     display: none;
   }
+}
+
+/* ── Angular Material · glass cyberpunk (modo oscuro) ───────────────────── */
+.glass-card {
+  background: rgba(18, 18, 18, 0.72) !important;
+  border: 1px solid rgba(255, 180, 168, 0.22) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #e8e8e8 !important;
+}
+
+.glass-card mat-card-header {
+  padding-bottom: 8px;
+}
+
+.glass-card mat-card-title {
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 1.35rem !important;
+  letter-spacing: 0.06em;
+  color: #f2f2f2 !important;
+}
+
+.glass-card mat-card-subtitle {
+  color: #a88782 !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.08em;
+}
+
+.login-form,
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.field-icon {
+  color: #ffb4a8 !important;
+  margin-right: 8px;
+}
+
+.alert-error {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 80, 80, 0.45);
+  background: rgba(80, 20, 20, 0.35);
+  color: #ffb4b4;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.alert-success {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(80, 255, 180, 0.35);
+  background: rgba(20, 60, 40, 0.35);
+  color: #b4ffd9;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.actions-row {
+  margin-top: 12px;
+}
+
+.submit-btn {
+  width: 100%;
+  min-height: 48px;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  background: linear-gradient(135deg, #c00100, #8b0000) !important;
+  color: #fff !important;
+}
+
+.submit-btn:disabled {
+  opacity: 0.55;
+}
+
+.btn-spinner {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.btn-spinner circle {
+  stroke: #fff !important;
+}
+
+.ghost-btn {
+  width: 100%;
+  border-color: rgba(255, 180, 168, 0.35) !important;
+  color: #ebbbb4 !important;
+}
+
+.secondary-actions {
+  margin-top: 8px;
+}
+
+.demo-block {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.demo-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: #ffb4a8;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.demo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-chip {
+  font-size: 0.7rem !important;
+  border-color: #333 !important;
+}
+
+.demo-chip .demo-role {
+  display: block;
+  color: #ffb4a8;
+  letter-spacing: 0.06em;
+}
+
+.demo-chip .demo-meta {
+  display: block;
+  font-size: 0.65rem;
+  color: #888;
+}
+
+.language-selector .lang {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.language-selector .lang.active {
+  color: #ffb4a8;
+}
+
+.language-selector .lang-div {
+  color: #444;
+}
+
+::ng-deep .glass-card .mat-mdc-form-field-subscript-wrapper {
+  margin-bottom: 4px;
+}
+
+::ng-deep .glass-card .mat-mdc-text-field-wrapper {
+  background: rgba(10, 10, 10, 0.85) !important;
+}
+
+::ng-deep .glass-card .mdc-notched-outline__leading,
+::ng-deep .glass-card .mdc-notched-outline__notch,
+::ng-deep .glass-card .mdc-notched-outline__trailing {
+  border-color: rgba(255, 180, 168, 0.25) !important;
+}
+
+::ng-deep .glass-card .mat-mdc-input-element {
+  color: #f0f0f0 !important;
 }

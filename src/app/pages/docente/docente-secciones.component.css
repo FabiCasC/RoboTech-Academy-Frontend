@@ -1,0 +1,84 @@
+.sec-root {
+  padding: 24px 32px;
+  font-family: 'Space Grotesk', monospace;
+  color: #ccc;
+}
+
+.badge {
+  color: #ffb4a8;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+}
+
+h1 {
+  color: #fff;
+  font-size: 20px;
+  letter-spacing: 1.8px;
+  margin: 8px 0 16px;
+}
+
+.back {
+  color: #ebbbb4;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.sec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.sec-card {
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 18px;
+  background: rgba(20, 20, 20, 0.8);
+}
+
+.sec-card h2 {
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.meta {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 14px;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stats .label {
+  display: block;
+  font-size: 10px;
+  color: #ebbbb4;
+  letter-spacing: 0.8px;
+}
+
+.stats .val {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stats .val.warn {
+  color: #ff8a6b;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #ffb4a850;
+  color: #ffb4a8;
+  text-decoration: none;
+  font-size: 11px;
+  border-radius: 4px;
+}

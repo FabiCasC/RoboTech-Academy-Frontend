@@ -1,130 +1,146 @@
 <div class="lab-root">
-
   <div class="body-area">
 
-    <aside class="palette">
-      <div class="palette-head">
-        <div class="palette-title">COMPONENTS KIT</div>
-        <div class="palette-sub">Arrastra o agrega al workspace</div>
-      </div>
-
-      <div class="palette-preview">
-        <app-three-kit-viewer *ngIf="selectedKitId" [kitId]="selectedKitId"></app-three-kit-viewer>
-      </div>
-
-      <div class="palette-actions">
-        <button type="button" class="palette-btn" (click)="addSelectedKit()" [disabled]="!selectedKitId">
-          <span class="material-symbols-outlined">add</span>
-          AGREGAR
-        </button>
-      </div>
-
-      <div class="palette-list">
-        <button
-          type="button"
-          class="palette-item"
-          *ngFor="let item of kitItems"
-          [class.active]="item.id === selectedKitId"
-          (click)="selectKit(item.id)"
-        >
-          <div class="palette-item-title">{{ item.title }}</div>
-          <div class="palette-item-meta">{{ item.category }}</div>
-        </button>
-      </div>
-    </aside>
-
-    <!-- WORKSPACE -->
+    <!-- ═══════════════════════════════════════════════════════════════════
+         WORKSPACE  (canvas + overlay elements)
+    ════════════════════════════════════════════════════════════════════ -->
     <div class="workspace-wrap">
       <div class="canvas-border">
 
-        <!-- Topbar del canvas -->
+        <!-- Topbar -->
         <div class="ws-topbar">
           <div class="ws-topbar-left">
             <span class="live-dot"></span>
             LIVE WORKSPACE : {{ workspaceName }}
           </div>
           <div class="ws-topbar-right">
+            <span class="view-badge" [class.active]="viewMode === '3d'">P5 · WEBGL</span>
             <span>GRID: 32PX</span>
             <span>ZOOM: {{ zoom }}%</span>
           </div>
         </div>
 
-        <!-- Canvas interactivo -->
-        <div class="workspace" #workspace
-             (mousemove)="onMouseMove($event)"
-             (mouseup)="onMouseUp()">
+        <!-- Canvas area -->
+        <div class="workspace">
 
-          <!-- SVG líneas de conexión -->
-          <svg class="connectors-svg">
-            <path *ngFor="let c of connections"
-                  [attr.d]="c.path"
-                  stroke="#FFB4A840" stroke-width="1"
-                  fill="none" stroke-dasharray="6 4"/>
-          </svg>
+          <!-- ── 3D scene (p5 WEBGL) ── -->
+          @if (viewMode === '3d') {
+            <app-p5-lab-scene
+              class="lab-scene-3d"
+              [components]="componentsFor3D()"
+              [selectedId]="selectedId()"
+              [cinematicMode]="circuit.isSimulating()">
+            </app-p5-lab-scene>
+          }
 
-          <!-- Componentes -->
-          <div *ngFor="let comp of components"
-               class="component-card"
-               [class.selected]="comp.id === selectedId"
-               [class.card-large]="comp.kitId === 'arduino-uno-r3'"
-               [class.card-small]="comp.kitId !== 'arduino-uno-r3'"
-               [class.clickable]="comp.kitId === 'arduino-uno-r3'"
-               [ngStyle]="{ left: comp.x + 'px', top: comp.y + 'px', width: comp.w + 'px', height: comp.h + 'px' }"
-               (mousedown)="startDrag($event, comp)"
-               (dblclick)="openIDE(comp.id)">
+          <!-- ── 2D scene (p5 Canvas 2D) ── -->
+          @if (viewMode === '2d') {
+            <app-p5-lab2d-canvas
+              class="lab-canvas-2d"
+              [components]="components()"
+              [connections]="connections()"
+              [selectedId]="selectedId()"
+              (componentMoved)="onComponentMoved($event)"
+              (componentSelected)="onComponentSelected($event)"
+              (connectionMade)="onConnectionMade($event)"
+              (componentDoubleClicked)="onComponentDoubleClicked($event)"
+              (kitDropped)="onKitDropped($event)">
+            </app-p5-lab2d-canvas>
+          }
 
-            <div class="card-header">
-              <!-- CTRL_UNIT icon: CPU -->
-              <svg *ngIf="comp.kitId === 'arduino-uno-r3'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="4" y="4" width="16" height="16" rx="2"/>
-                <rect x="9" y="9" width="6" height="6"/>
-                <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
-                <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
-                <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
-                <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+          <!-- ── Glassmorphism floating palette ── -->
+          @if (paletteOpen) {
+            <aside class="palette-glass">
+              <div class="palette-glass-head">
+                <span class="palette-title">COMPONENTS KIT</span>
+                <button class="palette-close" (click)="togglePalette()" title="Cerrar paleta">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- p5 preview of selected kit -->
+              <div class="palette-preview">
+                @if (selectedKitId) {
+                  <app-p5-kit-viewer [kitId]="selectedKitId"></app-p5-kit-viewer>
+                }
+              </div>
+
+              <!-- Add button -->
+              <button class="palette-btn" (click)="addSelectedKit()" [disabled]="!selectedKitId">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                AGREGAR AL CANVAS
+              </button>
+
+              <!-- Kit list (draggable items) -->
+              <div class="palette-list">
+                @for (item of kitItems; track item.id) {
+                  <div
+                    class="palette-item"
+                    [class.active]="item.id === selectedKitId"
+                    draggable="true"
+                    (click)="selectKit(item.id)"
+                    (dragstart)="$event.dataTransfer?.setData('text/plain', item.id)">
+                    <div class="palette-item-title">{{ item.title }}</div>
+                    <div class="palette-item-meta">{{ item.category }}</div>
+                  </div>
+                }
+              </div>
+            </aside>
+          }
+
+          <!-- Palette toggle button (when closed) -->
+          @if (!paletteOpen) {
+            <button class="palette-open-btn" (click)="togglePalette()" title="Abrir paleta de componentes">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
               </svg>
-              <!-- MOTOR_DRV icon -->
-              <svg *ngIf="comp.kitId === 'l298n'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="5" y1="3" x2="5" y2="21"/>
-                <line x1="12" y1="3" x2="12" y2="21"/>
-                <line x1="19" y1="3" x2="19" y2="21"/>
-              </svg>
-              <!-- IR_SENS icon -->
-              <svg *ngIf="comp.kitId === 'tcrt5000'" class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="2"/>
-                <path d="M8.5 8.5a5 5 0 0 0 0 7"/>
-                <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-              </svg>
-              <span
-                *ngIf="comp.kitId !== 'arduino-uno-r3' && comp.kitId !== 'l298n' && comp.kitId !== 'tcrt5000'"
-                class="material-symbols-outlined card-ico material-ico"
-              >
-                extension
-              </span>
-              {{ comp.label }}
+              KITS
+            </button>
+          }
 
-              <!-- Hint doble click solo en CTRL_UNIT -->
-              <span *ngIf="comp.kitId === 'arduino-uno-r3'" class="ctrl-hint">2x</span>
-            </div>
-
-            <!-- Body solo para CTRL_UNIT -->
-            <div *ngIf="comp.kitId === 'arduino-uno-r3'" class="card-body">
-              <div class="port port-right active" style="top: 17px;"></div>
-              <div class="port port-right"        style="top: 49px;"></div>
-              <div class="port port-right"        style="top: 81px;"></div>
-            </div>
-
-            <!-- Port izquierdo para componentes pequeños -->
-            <div *ngIf="comp.kitId !== 'arduino-uno-r3' && comp.ports.length > 0"
-                 class="port port-left"
-                 [class.active]="comp.ports[0].active">
-            </div>
-
-          </div>
-
-          <!-- Telemetry -->
+          <!-- ── Telemetry + hardware validation overlay ── -->
           <div class="telemetry">
-            <div class="tele-title">SYS_TELEMETRY</div>
+            <div class="tele-title">SYS-ROLE · HARDWARE_GRAPH</div>
+            @if (hardwareReport) {
+              <div class="tele-row">
+                <span class="tele-key">SCORE:</span>
+                <span class="tele-val">{{ hardwareReport.score }}%</span>
+              </div>
+              <div class="tele-row">
+                <span class="tele-key">VALID:</span>
+                <span class="tele-status" [class.nominal]="hardwareReport.valid">
+                  {{ hardwareReport.valid ? 'OK' : 'FAIL' }}
+                </span>
+              </div>
+              @for (err of hardwareReport.errors; track err) {
+                <p class="sys-msg error">{{ err }}</p>
+              }
+              @for (warn of hardwareReport.warnings; track warn) {
+                <p class="sys-msg warn">{{ warn }}</p>
+              }
+            }
+            @if (circuit.isLoading()) {
+              <p class="sys-msg api-loading">Sincronizando con API…</p>
+            }
+            @if (circuit.errorMessage(); as apiErr) {
+              <p class="sys-msg error">{{ apiErr }}</p>
+            }
+            @if (circuit.validationErrors().length) {
+              <div class="tele-title tele-divider">API · VALIDACIÓN</div>
+              @for (msg of circuit.validationErrors(); track msg) {
+                <p class="sys-msg warn">{{ msg }}</p>
+              }
+            }
+            @if (circuit.isSimulating()) {
+              <p class="sys-msg ok">Simulación aprobada · modo cinemático activo</p>
+              <button type="button" class="sys-stop-btn" (click)="stopBackendSimulation()">Detener simulación</button>
+            }
+            <div class="tele-title tele-divider">SYS_TELEMETRY</div>
             <div class="tele-row">
               <span class="tele-key">PWR:</span>
               <span class="tele-val">{{ telemetry.pwr }}</span>
@@ -135,30 +151,57 @@
             </div>
             <div class="tele-row">
               <span class="tele-key">STATUS:</span>
-              <span class="tele-status" [class.nominal]="telemetry.status === 'NOMINAL'">{{ telemetry.status }}</span>
+              <span class="tele-status" [class.nominal]="telemetry.status === 'NOMINAL'">
+                {{ telemetry.status }}
+              </span>
             </div>
           </div>
 
-        </div>
-      </div>
+          <!-- ── Wiring hint ── -->
+          @if (viewMode === '2d') {
+            <div class="wire-hint">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Arrastra kits · Haz clic entre pines para cablear · Doble clic en Arduino → IDE
+            </div>
+          }
+
+        </div><!-- /workspace -->
+      </div><!-- /canvas-border -->
 
       <!-- Toolbar -->
       <footer class="toolbar">
-        <button class="tool-btn" [class.active]="activeTool === 'pan'" (click)="setTool('pan')" title="Mover canvas">
+        <button class="tool-btn" [class.active]="activeTool === 'pan'"    (click)="setTool('pan')"    title="Modo paneo">
           <span class="material-symbols-outlined">pan_tool</span>
         </button>
-        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')" title="Seleccionar">
+        <button class="tool-btn" [class.active]="activeTool === 'select'" (click)="setTool('select')" title="Seleccionar y mover">
           <span class="material-symbols-outlined">arrow_selector_tool</span>
+        </button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" [class.active]="viewMode === '2d'" (click)="setViewMode('2d')" title="Vista esquemática 2D (p5.js)">
+          <span class="material-symbols-outlined">grid_view</span>
+        </button>
+        <button class="tool-btn" [class.active]="viewMode === '3d'" (click)="setViewMode('3d')" title="Vista 3D (p5.js WebGL)">
+          <span class="material-symbols-outlined">view_in_ar</span>
+        </button>
+        <div class="tool-sep"></div>
+        <button
+          class="tool-btn tool-api"
+          [disabled]="circuit.isLoading()"
+          (click)="validateCircuitWithBackend()"
+          title="Validar circuito y código en el backend (JWT)">
+          <span class="material-symbols-outlined">cloud_done</span>
         </button>
         <div class="tool-sep"></div>
         <button class="tool-btn" (click)="undo()" title="Deshacer">
           <span class="material-symbols-outlined">undo</span>
         </button>
-        <button class="tool-btn" (click)="deleteSelected()" title="Eliminar seleccionado">
+        <button class="tool-btn" (click)="deleteSelected()" title="Eliminar componente seleccionado">
           <span class="material-symbols-outlined">delete</span>
         </button>
       </footer>
 
-    </div>
-  </div>
+    </div><!-- /workspace-wrap -->
+  </div><!-- /body-area -->
 </div>

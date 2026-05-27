@@ -20,9 +20,40 @@
   letter-spacing: 1px;
 }
 
+.role-badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #ffb4a8;
+  border: 1px solid #ffb4a840;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+
 .version-badge {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.sidebar-user {
+  margin-top: auto;
+  padding: 16px 32px 0;
+  border-top: 1px solid #333;
+  padding-top: 20px;
+}
+
+.user-name {
+  display: block;
+  font-size: 12px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.user-role {
+  font-size: 10px;
+  color: #888;
+  letter-spacing: 0.6px;
 }
 
 .sidebar-nav {

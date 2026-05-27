@@ -1,33 +1,29 @@
 <div class="sidebar-wrapper">
   <div class="sidebar-header">
     <h2 class="app-title">RoboTech Academy</h2>
+    @if (roleProfile) {
+      <span class="role-badge">{{ roleProfile.code }}-ROLE</span>
+    }
     <span class="version-badge">V1.0.2-BETA</span>
   </div>
 
   <nav class="sidebar-nav">
-    <a routerLink="/dashboard" [class.active]="isDashboardActive()" class="nav-item">
-      <span class="material-symbols-outlined nav-icon">sensors</span>
-      <span class="nav-label">Dashboard</span>
-    </a>
-
-    <a routerLink="/laboratorio2d" routerLinkActive="active" class="nav-item">
-      <span class="material-symbols-outlined nav-icon">settings_input_component</span>
-      <span class="nav-label">Labs</span>
-    </a>
-
-    <a routerLink="/components" routerLinkActive="active" class="nav-item">
-      <span class="material-symbols-outlined nav-icon">memory</span>
-      <span class="nav-label">Components kit</span>
-    </a>
-
-    <a routerLink="/settings" class="nav-item disabled">
-      <span class="material-symbols-outlined nav-icon">settings</span>
-      <span class="nav-label">Settings</span>
-    </a>
-
-    <a routerLink="/foro" routerLinkActive="active" class="nav-item">
-      <span class="material-symbols-outlined nav-icon">trending_up</span>
-      <span class="nav-label">Foro</span>
-    </a>
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="item.path"
+        [class.active]="isItemActive(item.path)"
+        class="nav-item"
+      >
+        <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
   </nav>
+
+  @if (session) {
+    <div class="sidebar-user">
+      <span class="user-name">{{ session.displayName }}</span>
+      <span class="user-role">{{ roleProfile?.label }}</span>
+    </div>
+  }
 </div>

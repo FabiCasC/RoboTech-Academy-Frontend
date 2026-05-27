@@ -1,0 +1,76 @@
+.flow-root {
+  margin-bottom: 28px;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: rgba(20, 20, 20, 0.65);
+}
+
+.flow-badge {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  color: #ffb4a8;
+  margin-bottom: 6px;
+}
+
+.flow-root h2 {
+  font-size: 14px;
+  letter-spacing: 1.6px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.flow-desc {
+  font-size: 12px;
+  color: #ebbbb4;
+  opacity: 0.9;
+  margin-bottom: 16px;
+  max-width: 720px;
+  line-height: 1.45;
+}
+
+.flow-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+
+.flow-step:hover {
+  border-color: #ffb4a8;
+}
+
+.step-icon {
+  color: #ffb4a8;
+  font-size: 22px;
+}
+
+.step-n {
+  font-size: 10px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.step-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.6px;
+}
+
+.step-desc {
+  font-size: 11px;
+  color: #999;
+  line-height: 1.35;
+}

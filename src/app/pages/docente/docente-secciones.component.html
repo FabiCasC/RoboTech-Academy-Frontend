@@ -1,0 +1,33 @@
+<div class="sec-root">
+  <header>
+    <p class="badge">DOC-ROLE · SECCIONES</p>
+    <h1>SECCIONES_ASIGNADAS</h1>
+    <a routerLink="/docente" class="back">← Volver al panel</a>
+  </header>
+
+  <div class="sec-grid">
+    @for (sec of sections; track sec.id) {
+      <article class="sec-card">
+        <h2>{{ sec.name }}</h2>
+        <p class="meta">ID: {{ sec.id }}</p>
+        <div class="stats">
+          <div>
+            <span class="label">Alumnos</span>
+            <span class="val">{{ sec.studentCount }}</span>
+          </div>
+          <div>
+            <span class="label">Progreso medio</span>
+            <span class="val">{{ sec.avgProgress }}%</span>
+          </div>
+          <div>
+            <span class="label">En riesgo</span>
+            <span class="val warn">{{ sec.atRiskCount }}</span>
+          </div>
+        </div>
+        <a [routerLink]="['/docente']" [queryParams]="{ section: sec.id }" class="btn">
+          Ver alumnos
+        </a>
+      </article>
+    }
+  </div>
+</div>

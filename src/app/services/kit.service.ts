@@ -13,7 +13,7 @@ export class KitService {
 
   getCatalog(): Observable<KitItem[]> {
     return this.http
-      .get<KitItem[]>(`${environment.API_BASE_URL}/kit/catalog`)
+      .get<KitItem[]>(`${environment.apiUrl}/kit/catalog`)
       .pipe(catchError(() => of(KIT_CATALOG)));
   }
 
@@ -23,7 +23,7 @@ export class KitService {
 
   getDetail(id: string): Observable<KitDetail | undefined> {
     return this.http
-      .get<KitDetail>(`${environment.API_BASE_URL}/kit/details/${encodeURIComponent(id)}`)
+      .get<KitDetail>(`${environment.apiUrl}/kit/details/${encodeURIComponent(id)}`)
       .pipe(catchError(() => of(getKitDetailById(id))));
   }
 }

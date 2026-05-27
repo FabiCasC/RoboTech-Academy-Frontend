@@ -13,6 +13,19 @@
   z-index: 10;
 }
 
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.topbar-role {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #888;
+}
+
 .logo {
   font-family: 'Montserrat', sans-serif;
   font-style: italic;

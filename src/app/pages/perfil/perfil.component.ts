@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
+import { ROLE_PROFILES } from '../../core/models/system-roles.models';
 
 @Component({
   selector: 'app-perfil',
@@ -9,10 +11,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './perfil.component.css'
 })
 export class PerfilComponent {
+  private readonly auth = inject(AuthService);
+  readonly session = this.auth.getSession();
+  readonly roleProfile = this.session ? ROLE_PROFILES[this.session.role] : null;
+
   user = {
-    name: "ALEX 'TECH' RIVERA",
-    role: "ARQUITECTO DE SISTEMAS SENIOR",
-    id: "AX-7742",
+    name: this.session?.displayName ?? 'Usuario',
+    role: this.roleProfile?.label ?? '—',
+    roleCode: this.session?.role ?? '—',
+    id: this.session?.email?.split('@')[0]?.toUpperCase() ?? '—',
     level: 42,
     xp: 8450,
     maxXp: 10000
