@@ -14,6 +14,15 @@
             LIVE WORKSPACE : {{ workspaceName }}
           </div>
           <div class="ws-topbar-right">
+            @if (workspaceMessage(); as msg) {
+              <span class="ws-flash ok">{{ msg }}</span>
+            }
+            @if (workspaceError(); as err) {
+              <span class="ws-flash err">{{ err }}</span>
+            }
+            @if (submitted()) {
+              <span class="ws-flash submitted">ENTREGADO</span>
+            }
             <span class="view-badge" [class.active]="viewMode === '3d'">P5 · WEBGL</span>
             <span>GRID: 32PX</span>
             <span>ZOOM: {{ zoom }}%</span>
@@ -27,7 +36,8 @@
           @if (viewMode === '3d') {
             <app-p5-lab-scene
               class="lab-scene-3d"
-              [components]="componentsFor3D()"
+              [components]="components()"
+              [connections]="connections()"
               [selectedId]="selectedId()"
               [cinematicMode]="circuit.isSimulating()">
             </app-p5-lab-scene>
@@ -75,13 +85,13 @@
 
               <!-- Kit list (draggable items) -->
               <div class="palette-list">
-                @for (item of kitItems; track item.id) {
+                @for (item of kitItems(); track item.id) {
                   <div
                     class="palette-item"
                     [class.active]="item.id === selectedKitId"
                     draggable="true"
                     (click)="selectKit(item.id)"
-                    (dragstart)="$event.dataTransfer?.setData('text/plain', item.id)">
+                    (dragstart)="onKitDragStart($event, item.id)">
                     <div class="palette-item-title">{{ item.title }}</div>
                     <div class="palette-item-meta">{{ item.category }}</div>
                   </div>
@@ -157,6 +167,93 @@
             </div>
           </div>
 
+          <!-- ── Floating IDE panel (doble clic en Arduino) ── -->
+          @if (idePanelOpen()) {
+            <aside class="ide-float-panel" aria-label="IDE Arduino">
+              <header class="ide-float-head">
+                <h2>IDE — ARDUINO UNO R3</h2>
+                <button type="button" class="ide-float-close" (click)="closeIdePanel()" aria-label="Cerrar IDE">✕</button>
+              </header>
+
+              <div class="ide-float-body">
+                @if (ideError(); as err) {
+                  <p class="ide-float-banner error">{{ err }}</p>
+                }
+
+                <textarea
+                  class="ide-float-code"
+                  [(ngModel)]="ideFirmwareCode"
+                  (input)="onIdeCodeInput()"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                ></textarea>
+
+                <button
+                  type="button"
+                  class="ide-float-validate"
+                  [disabled]="ideValidating()"
+                  (click)="validateAndSimulate()"
+                >
+                  @if (ideValidating()) {
+                    Validando…
+                  } @else {
+                    Validar y Simular
+                  }
+                </button>
+
+                @if (ideValidationResult(); as result) {
+                  <div class="ide-float-results" [class.passed]="ideValidationPassed()">
+                    @if (ideValidationPassed()) {
+                      <p class="ide-result-title ok">✅ Validación aprobada — simulación lista</p>
+                      <p class="ide-result-hint">La sección de simulación aparece debajo del canvas.</p>
+                    } @else {
+                      <p class="ide-result-title fail">Validación fallida</p>
+
+                      @if (ideHardwareFaults().length) {
+                        <div class="ide-fault-group">
+                          <h4>HARDWARE</h4>
+                          <ul>
+                            @for (f of ideHardwareFaults(); track $index) {
+                              <li>{{ f.message }}</li>
+                            }
+                          </ul>
+                        </div>
+                      }
+
+                      @if (ideFirmwareFaults().length) {
+                        <div class="ide-fault-group">
+                          <h4>FIRMWARE</h4>
+                          <ul>
+                            @for (f of ideFirmwareFaults(); track $index) {
+                              <li>{{ f.message }}</li>
+                            }
+                          </ul>
+                        </div>
+                      }
+
+                      @if (ideOtherFaults().length) {
+                        <div class="ide-fault-group">
+                          <h4>OTROS</h4>
+                          <ul>
+                            @for (f of ideOtherFaults(); track $index) {
+                              <li>{{ f.message }}</li>
+                            }
+                          </ul>
+                        </div>
+                      }
+
+                      @if (!ideHardwareFaults().length && !ideFirmwareFaults().length && !ideOtherFaults().length) {
+                        <p class="ide-result-hint">El servidor rechazó la validación sin detalles adicionales.</p>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            </aside>
+          }
+
           <!-- ── Wiring hint ── -->
           @if (viewMode === '2d') {
             <div class="wire-hint">
@@ -186,22 +283,47 @@
           <span class="material-symbols-outlined">view_in_ar</span>
         </button>
         <div class="tool-sep"></div>
-        <button
-          class="tool-btn tool-api"
-          [disabled]="circuit.isLoading()"
-          (click)="validateCircuitWithBackend()"
-          title="Validar circuito y código en el backend (JWT)">
-          <span class="material-symbols-outlined">cloud_done</span>
-        </button>
-        <div class="tool-sep"></div>
         <button class="tool-btn" (click)="undo()" title="Deshacer">
           <span class="material-symbols-outlined">undo</span>
         </button>
         <button class="tool-btn" (click)="deleteSelected()" title="Eliminar componente seleccionado">
           <span class="material-symbols-outlined">delete</span>
         </button>
+        @if (projectId) {
+          <div class="tool-sep"></div>
+          @if (isCourseLab()) {
+            <button
+              type="button"
+              class="tool-btn tool-submit"
+              [disabled]="submittingLab() || submitted()"
+              (click)="submitCourseLab()"
+              title="Entregar laboratorio al docente">
+              <span class="material-symbols-outlined">assignment_turned_in</span>
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="tool-btn tool-save"
+              [disabled]="savingWorkspace()"
+              (click)="saveWorkspace()"
+              title="Guardar progreso en el servidor">
+              <span class="material-symbols-outlined">save</span>
+            </button>
+          }
+        }
       </footer>
 
     </div><!-- /workspace-wrap -->
+
+    @if (circuit.approvalToken(); as token) {
+      <section class="simulation-section" aria-label="Simulación del robot">
+        <h2 class="simulation-heading">SIMULACIÓN</h2>
+        <app-p5-robot-simulator
+          [approvalToken]="token"
+          [firmwareCode]="firmwareSnapshot()"
+          [connections]="connections()"
+        />
+      </section>
+    }
   </div><!-- /body-area -->
 </div>

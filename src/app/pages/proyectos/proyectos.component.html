@@ -1,103 +1,126 @@
-<div class="projects-container">
+<div class="labs-page">
+  <header class="labs-header">
+    <div>
+      <p class="labs-kicker">WORKSPACE · LABORATORIOS</p>
+      <h1>Laboratorios</h1>
+      <p class="labs-sub">Proyectos de curso y experimentación libre en el canvas 2D.</p>
+    </div>
+    <button type="button" class="btn-refresh" (click)="reload()" [disabled]="loading()">
+      Actualizar
+    </button>
+  </header>
 
-    <!-- HEADER -->
-    <div class="projects-header">
-        <div class="header-content">
-            <h1 class="page-title">DASHBOARD</h1>
-            <div class="tabs-container">
-                <button class="tab" routerLink="/proyectos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">PROYECTOS</button>
-                <button class="tab" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">CURSOS</button>
-            </div>
-        </div>
-        <div class="status-pill">
-            <span class="status-dot"></span>
-            SYS.STATUS: ONLINE
-        </div>
+  @if (loadError(); as err) {
+    <div class="banner error" role="alert">{{ err }}</div>
+  }
+  @if (loading()) {
+    <p class="state-msg">Cargando proyectos…</p>
+  }
+
+  <section class="labs-section">
+    <div class="section-head">
+      <h2>Laboratorios de Curso</h2>
+      <span class="section-count">{{ courseProjects().length }}</span>
     </div>
 
-    <!-- CONTENT GRID -->
-    <div class="content-grid">
-
-        <div class="projects-list">
-            <a *ngFor="let p of items" class="project-card" [routerLink]="['/proyectos', p.id]">
-                <div class="card-header">
-                    <div class="pill-row">
-                        <span class="mini-pill" [class.course]="p.kind === 'COURSE'">{{ p.kind === 'COURSE' ? 'CURSO' : 'LIBRE' }}</span>
-                    </div>
-                    <span class="card-id">ID: {{ p.id }}</span>
-                </div>
-
-                <div>
-                    <div class="card-title">
-                        {{ p.title }}
-                    </div>
-                    <p class="card-desc card-desc-clip">
-                        {{ p.description }}
-                    </p>
-                </div>
-
-                <div class="card-divider"></div>
-
-                <div class="card-footer">
-                    <div class="build-status">
-                        <div class="build-label">
-                            ESTADO
-                            <span>{{ p.kind === 'COURSE' ? 'FIJO' : 'EDITABLE' }}</span>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill progress-fill-dim"></div>
-                        </div>
-                    </div>
-                    <span class="btn-primary btn-link">ABRIR</span>
-                </div>
-            </a>
-        </div>
-
-        <!-- RIGHT PANEL -->
-        <div class="right-panel">
-
-            <div class="panel-card">
-                <div class="panel-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2v20M2 12h20" />
-                    </svg>
-                    NUEVO LAB LIBRE
-                </div>
-
-                <div class="form-stack">
-                    <label class="form-label">TITULO</label>
-                    <input class="form-input" [(ngModel)]="titleDraft" placeholder="Ej: Seguidor de linea v2"/>
-
-                    <label class="form-label">DESCRIPCION</label>
-                    <textarea class="form-input form-area" [(ngModel)]="descriptionDraft" placeholder="Objetivo del lab..."></textarea>
-
-                    <button type="button" class="btn-primary form-btn" (click)="createFree()">CREAR</button>
-                </div>
+    @if (!loading() && !courseProjects().length) {
+      <p class="state-msg">No tienes laboratorios vinculados a un curso todavía.</p>
+    } @else {
+      <div class="card-grid">
+        @for (p of courseProjects(); track p.id) {
+          <article class="lab-card">
+            <div class="card-top">
+              <span class="status-pill" [class.done]="p.submitted">{{ statusLabel(p) }}</span>
+              <span class="card-date">{{ formatDate(p.updatedAt) }}</span>
             </div>
+            <h3 class="card-title">{{ p.title }}</h3>
+            <p class="card-course">{{ courseTitle(p.courseSlug) }}</p>
+            <button type="button" class="btn-card" (click)="continueProject(p)">
+              Continuar
+            </button>
+          </article>
+        }
+      </div>
+    }
+  </section>
 
-            <div class="panel-card">
-                <div class="panel-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    RESUMEN
-                </div>
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <div class="summary-key">TOTAL LABS</div>
-                        <div class="summary-val">{{ totalLabs }}</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-key">CURSOS</div>
-                        <div class="summary-val">{{ courseLabs }}</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-key">LIBRES</div>
-                        <div class="summary-val">{{ freeLabs }}</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+  <section class="labs-section">
+    <div class="section-head">
+      <h2>Laboratorios Libres</h2>
+      <span class="section-count">{{ freeProjects().length }}</span>
     </div>
+
+    <button type="button" class="btn-new" (click)="openCreateModal()">
+      ＋ Nuevo Laboratorio Libre
+    </button>
+
+    @if (!loading() && !freeProjects().length) {
+      <p class="state-msg">Crea tu primer laboratorio libre con el botón de arriba.</p>
+    } @else {
+      <div class="card-grid">
+        @for (p of freeProjects(); track p.id) {
+          <article class="lab-card">
+            <div class="card-top">
+              <span class="status-pill libre">LIBRE</span>
+              <span class="card-date">{{ formatDate(p.updatedAt) }}</span>
+            </div>
+            <h3 class="card-title">{{ p.title }}</h3>
+            @if (p.description) {
+              <p class="card-desc">{{ p.description }}</p>
+            }
+            <button type="button" class="btn-card" (click)="openFreeProject(p)">
+              Abrir
+            </button>
+          </article>
+        }
+      </div>
+    }
+  </section>
 </div>
+
+@if (modalOpen()) {
+  <div class="modal-backdrop" (click)="closeCreateModal()" aria-hidden="true"></div>
+  <div class="modal-panel" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <header class="modal-header">
+      <h2 id="modal-title">Nuevo Laboratorio Libre</h2>
+      <button type="button" class="modal-close" (click)="closeCreateModal()" aria-label="Cerrar">✕</button>
+    </header>
+
+    <div class="modal-body">
+      @if (createError(); as err) {
+        <div class="banner error">{{ err }}</div>
+      }
+
+      <label class="field-label" for="lab-name">Nombre del laboratorio *</label>
+      <input
+        id="lab-name"
+        class="field-input"
+        [(ngModel)]="createTitle"
+        placeholder="Ej: Mi seguidor de línea v2"
+        maxlength="120"
+      />
+
+      <label class="field-label" for="lab-desc">Descripción</label>
+      <textarea
+        id="lab-desc"
+        class="field-input field-area"
+        [(ngModel)]="createDescription"
+        placeholder="Objetivo del experimento (opcional)"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-ghost" (click)="closeCreateModal()" [disabled]="creating()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-create" (click)="createAndEnter()" [disabled]="creating()">
+        @if (creating()) {
+          Creando…
+        } @else {
+          Crear y Entrar
+        }
+      </button>
+    </footer>
+  </div>
+}

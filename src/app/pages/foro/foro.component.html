@@ -6,39 +6,48 @@
 
       <!-- POST EDITOR CARD -->
       <div class="post-editor-card">
+        @if (loadError) {
+          <p class="foro-hint foro-hint-error" role="alert">{{ loadError }}</p>
+        }
         <div class="editor-header">
           <img [src]="currentUser.avatar" alt="Current User Avatar" class="editor-avatar">
-          <textarea placeholder="Comparte tu última simulación, prototipo o bloque de código...."></textarea>
+          <div class="editor-fields">
+            <input class="editor-title-input" type="text" [(ngModel)]="draftTitle" placeholder="Título del post" />
+            <textarea [(ngModel)]="draftContent" placeholder="Comparte tu última simulación, prototipo o bloque de código...."></textarea>
+          </div>
         </div>
         <div class="editor-actions">
           <div class="media-tools">
-            <button class="tool-btn" title="Add Media">
+            <button type="button" class="tool-btn" title="Add Media" (click)="onToolClick('imagen')">
               <span class="material-symbols-outlined">image</span>
             </button>
-            <button class="tool-btn" title="Add Code Block">
+            <button type="button" class="tool-btn" title="Add Code Block" (click)="onToolClick('código')">
               <span class="material-symbols-outlined">code</span>
             </button>
-            <button class="tool-btn" title="Add Link">
+            <button type="button" class="tool-btn" title="Add Link" (click)="onToolClick('enlace')">
               <span class="material-symbols-outlined">link</span>
             </button>
           </div>
-          <button class="btn-post">POST DATA</button>
+          <button type="button" class="btn-post" (click)="onPostData()">POST DATA</button>
         </div>
+        @if (uiHint) {
+          <p class="foro-hint" role="status">{{ uiHint }}</p>
+        }
       </div>
 
       <!-- POSTS FEED LIST -->
-      @for (post of posts; track post.title) {
+      @for (post of posts; track post.id ?? post.title) {
       <div class="post-card">
         <!-- Post Header -->
         <div class="post-header">
           <div class="post-author-info">
-            <img [src]="post.authorAvatar" alt="Author Avatar" class="author-avatar">
+            <img [src]="post.authorAvatar ?? 'perfil.png'" alt="Author Avatar" class="author-avatar">
             <div class="author-meta">
-              <span class="author-name">{{ post.authorName }}</span>
-              <span class="author-title">{{ post.authorTitle }} • {{ post.time }}</span>
+              <span class="author-name">{{ post.authorName ?? 'Usuario' }}</span>
+              <span class="author-title">{{ post.authorTitle ?? '' }} @if (post.time) { • {{ post.time }} }</span>
             </div>
           </div>
-          <button class="btn-more">
+          <button type="button" class="btn-more">
             <span class="material-symbols-outlined">more_vert</span>
           </button>
         </div>
@@ -48,14 +57,16 @@
           <h2 class="post-title">{{ post.title }}</h2>
           <p class="post-text">{{ post.content }}</p>
 
+          @if (post.badges?.length) {
           <div class="post-badges">
-            @for (badge of post.badges; track badge.label) {
+            @for (badge of post.badges!; track badge.label) {
             <span class="post-badge">
               <span class="badge-lbl">{{ badge.label }}:</span>
               <span class="badge-val">{{ badge.value }}</span>
             </span>
             }
           </div>
+          }
 
           @if (post.mediaUrl) {
           <div class="post-media-container">
@@ -71,22 +82,21 @@
         <!-- Post Footer -->
         <div class="post-footer">
           <div class="footer-actions-left">
-            <button class="action-btn">
-              <span class="material-symbols-outlined action-ico">settings</span>
-              <span class="action-count">{{ post.likes }}</span>
+            <button type="button" class="action-btn" (click)="likePost(post.id)">
+              <span class="material-symbols-outlined action-ico">favorite</span>
+              <span class="action-count">{{ post.likes ?? 0 }}</span>
             </button>
-            <button class="action-btn">
+            <button type="button" class="action-btn">
               <span class="material-symbols-outlined action-ico">chat_bubble</span>
-              <span class="action-count">{{ post.comments }}</span>
+              <span class="action-count">{{ post.comments ?? 0 }}</span>
             </button>
           </div>
-          <button class="action-btn">
+          <button type="button" class="action-btn">
             <span class="material-symbols-outlined action-ico">share</span>
           </button>
         </div>
       </div>
       }
-
     </div>
 
     <!-- RIGHT COLUMN: SIDEBAR WIDGETS -->

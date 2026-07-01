@@ -6,24 +6,26 @@
   <div class="main-content">
     <div class="ide-panel">
 
-      <!-- IDE Header -->
       <div class="ide-header">
         <div class="ide-header-left">
           <svg width="12" height="10" viewBox="0 0 24 24" fill="none" stroke="#EBBBB4" stroke-width="1.5">
             <polyline points="4 17 10 11 4 5"/>
             <line x1="12" y1="19" x2="20" y2="19"/>
           </svg>
-          <span class="ide-filename">MAIN.CPP</span>
+          <span class="ide-filename">FIRMWARE.INO</span>
+          @if (projectId) {
+            <span class="ide-project-id">PROYECTO: {{ projectId }}</span>
+          }
           <span class="ide-live-badge">LIVE</span>
         </div>
         <div class="ide-header-right">
-          <button class="ide-icon-btn" title="Copiar" (click)="copiarCodigo()">
+          <button type="button" class="ide-icon-btn" title="Copiar" (click)="copiarCodigo()">
             <svg width="10" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="9" y="9" width="13" height="13" rx="2"/>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
             </svg>
           </button>
-          <button class="ide-icon-btn" title="Pantalla completa" (click)="toggleFullscreen()">
+          <button type="button" class="ide-icon-btn" title="Pantalla completa" (click)="toggleFullscreen()">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <polyline points="15 3 21 3 21 9"/>
               <polyline points="9 21 3 21 3 15"/>
@@ -34,57 +36,117 @@
         </div>
       </div>
 
-      <!-- IDE Code Editor -->
-      <div class="ide-editor">
-
-        <!-- Números de línea -->
-        <div class="line-numbers">
-          <span *ngFor="let line of codeLines; let i = index">{{ i + 1 }}</span>
-        </div>
-
-        <!-- Área de código -->
-        <div class="code-canvas">
-          <div class="code-line" *ngFor="let line of codeLines">
-            <span [innerHTML]="line.html"></span>
-          </div>
-        </div>
-
-      </div>
-
-      @if (validationReport) {
-        <div class="sys-validation-panel" [class.valid]="validationReport.valid">
-          <span class="sys-panel-title">SYS-ROLE · ANALIZADOR SINTÁCTICO</span>
-          <span>Score {{ validationReport.score }}%</span>
-          @for (err of validationReport.errors; track err) {
-            <p class="sys-err">{{ err }}</p>
-          }
-          @for (warn of validationReport.warnings; track warn) {
-            <p class="sys-warn">{{ warn }}</p>
-          }
-        </div>
+      @if (loading()) {
+        <div class="ide-banner">Cargando workspace del proyecto…</div>
+      }
+      @if (errorMessage(); as err) {
+        <div class="ide-banner error">{{ err }}</div>
+      }
+      @if (statusMessage(); as ok) {
+        <div class="ide-banner ok">{{ ok }}</div>
       }
 
-      <!-- IDE Footer -->
+      <div class="ide-editor">
+        <div class="line-numbers">
+          @for (n of lineNumbers(); track n) {
+            <span>{{ n }}</span>
+          }
+        </div>
+
+        <div class="code-editor-stack">
+          <pre class="code-highlight" #codeHighlight [innerHTML]="highlightedCode()"></pre>
+          <textarea
+            #codeInput
+            class="code-input"
+            [(ngModel)]="sourceCode"
+            (input)="onCodeInput()"
+            (scroll)="onEditorScroll($event)"
+            spellcheck="false"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+          ></textarea>
+        </div>
+      </div>
+
+      @if (validationResult(); as result) {
+        @if (validationPassed()) {
+          <div class="validation-panel passed">
+            <span class="validation-title">✅ VALIDACIÓN APROBADA</span>
+            <p>El circuito y el firmware cumplen los requisitos del seguidor de línea.</p>
+            <button type="button" class="btn-simulate" (click)="startSimulation()">
+              ▶ Iniciar Simulación
+            </button>
+          </div>
+        } @else {
+          <div class="validation-panel failed">
+            <span class="validation-title">VALIDACIÓN FALLIDA</span>
+
+            @if (hardwareFaults().length) {
+              <div class="fault-group">
+                <h4>HARDWARE</h4>
+                <ul>
+                  @for (f of hardwareFaults(); track $index) {
+                    <li>{{ f.message }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (firmwareFaults().length) {
+              <div class="fault-group">
+                <h4>FIRMWARE</h4>
+                <ul>
+                  @for (f of firmwareFaults(); track $index) {
+                    <li>{{ f.message }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (otherFaults().length) {
+              <div class="fault-group">
+                <h4>OTROS</h4>
+                <ul>
+                  @for (f of otherFaults(); track $index) {
+                    <li>{{ f.message }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (!hardwareFaults().length && !firmwareFaults().length && !otherFaults().length) {
+              <p class="fault-empty">El servidor rechazó la validación sin detalles adicionales.</p>
+            }
+          </div>
+        }
+      }
+
       <div class="ide-footer">
         <div class="ide-footer-left">
           <div class="board-status">
             <span class="board-dot"></span>
-            <span class="board-text">BOARD CONNECTED</span>
+            <span class="board-text">ARDUINO UNO R3</span>
           </div>
-          <span class="footer-divider">|</span>
-          <span class="port-text">COM3</span>
         </div>
-        @if (uploadMessage) {
-          <span class="upload-msg">{{ uploadMessage }}</span>
-        }
-        <button class="btn-upload" (click)="cargarCodigo()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-          CARGAR CÓDIGO AL ROBOT
-        </button>
+        <div class="ide-footer-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            [disabled]="!projectId || saving()"
+            (click)="saveCode()"
+          >
+            💾 Guardar
+          </button>
+          <button
+            type="button"
+            class="btn-upload"
+            [disabled]="!projectId || validating()"
+            (click)="validateCircuitAndCode()"
+          >
+            ✅ Validar Circuito + Código
+          </button>
+        </div>
       </div>
 
     </div>

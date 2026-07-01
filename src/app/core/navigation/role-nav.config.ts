@@ -16,25 +16,13 @@ export const ROLE_NAV_ITEMS: NavItem[] = [
   },
   {
     path: '/proyectos',
-    label: 'Proyectos',
-    icon: 'folder_open',
-    roles: ['EST-ROLE']
-  },
-  {
-    path: '/laboratorio2d',
     label: 'Laboratorio',
     icon: 'settings_input_component',
     roles: ['EST-ROLE']
   },
   {
-    path: '/ide-programacion',
-    label: 'IDE',
-    icon: 'code',
-    roles: ['EST-ROLE']
-  },
-  {
     path: '/components',
-    label: 'Kit componentes',
+    label: 'Kit Componentes',
     icon: 'memory',
     roles: ['EST-ROLE']
   },
@@ -46,13 +34,13 @@ export const ROLE_NAV_ITEMS: NavItem[] = [
   },
   {
     path: '/docente',
-    label: 'Panel docente',
+    label: 'Panel Docente',
     icon: 'analytics',
     roles: ['DOC-ROLE']
   },
   {
     path: '/docente/secciones',
-    label: 'Secciones',
+    label: 'Mis Secciones',
     icon: 'groups',
     roles: ['DOC-ROLE']
   },
@@ -60,7 +48,7 @@ export const ROLE_NAV_ITEMS: NavItem[] = [
     path: '/sistema',
     label: 'Motores SYS',
     icon: 'hub',
-    roles: ['SYS-ROLE', 'DOC-ROLE']
+    roles: ['SYS-ROLE']
   }
 ];
 

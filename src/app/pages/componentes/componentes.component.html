@@ -31,6 +31,9 @@
   </nav>
 
   <section class="kits-grid" aria-label="Galería de kits">
+    @if (loading()) {
+      <p class="empty-message">Cargando catálogo…</p>
+    } @else {
     @for (item of filteredItems; track item.id) {
       <a class="kit-card" [routerLink]="['/components', item.id]">
         <div class="card-image-wrapper">
@@ -57,6 +60,7 @@
       </a>
     } @empty {
       <p class="empty-message">No se encontraron componentes.</p>
+    }
     }
   </section>
 </div>

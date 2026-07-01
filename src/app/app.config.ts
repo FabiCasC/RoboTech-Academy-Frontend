@@ -7,6 +7,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { firebaseIdTokenInterceptor } from './interceptors/firebase-id-token.interceptor';
 import { authJwtInterceptor } from './interceptors/auth-jwt.interceptor';
+import { apiUnauthorizedInterceptor } from './interceptors/api-unauthorized.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,7 +16,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withFetch(),
-      withInterceptors([authJwtInterceptor, firebaseIdTokenInterceptor])
+      withInterceptors([
+        authJwtInterceptor,
+        firebaseIdTokenInterceptor,
+        apiUnauthorizedInterceptor
+      ])
     ),
     provideClientHydration(withEventReplay())
   ]

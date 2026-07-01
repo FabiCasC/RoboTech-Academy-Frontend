@@ -1,0 +1,52 @@
+@if (approvalToken) {
+  <section class="sim-root">
+    <header class="sim-header">
+      <div>
+        <p class="sim-kicker">SIMULACIÓN · SEGUIDOR DE LÍNEA</p>
+        <h2 class="sim-title">PISTA VIRTUAL</h2>
+      </div>
+      <span class="sim-token" title="Token de aprobación del backend">
+        TOKEN: {{ approvalToken.slice(0, 12) }}…
+      </span>
+    </header>
+
+    <div class="sim-body">
+      <div class="sim-canvas-wrap">
+        <div class="sim-host" #host></div>
+      </div>
+
+      <aside class="sim-panel">
+        <div class="sim-controls">
+          <button type="button" class="sim-btn primary" (click)="start()">▶ Iniciar</button>
+          <button type="button" class="sim-btn" (click)="pause()">⏸ Pausar</button>
+          <button type="button" class="sim-btn" (click)="reset()">↺ Reiniciar</button>
+        </div>
+
+        <div class="sim-stat">
+          <span class="stat-label">VUELTAS</span>
+          <span class="stat-value">{{ lapCount() }}</span>
+        </div>
+
+        <div class="telemetry">
+          <h3>TELEMETRÍA</h3>
+          <div class="tele-row">
+            <span>Velocidad</span>
+            <strong>{{ velocity() }} px/f</strong>
+          </div>
+          <div class="tele-row">
+            <span>Ángulo</span>
+            <strong>{{ heading() }}°</strong>
+          </div>
+          <div class="tele-row">
+            <span>Sensor izq.</span>
+            <strong [class.negro]="leftSensorState() === 'NEGRO'">{{ leftSensorState() }}</strong>
+          </div>
+          <div class="tele-row">
+            <span>Sensor der.</span>
+            <strong [class.negro]="rightSensorState() === 'NEGRO'">{{ rightSensorState() }}</strong>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+}

@@ -6,6 +6,7 @@ export type LabProject = {
   title: string;
   description: string;
   courseSlug?: string;
+  submitted?: boolean;
   createdAt: string;
   updatedAt: string;
 };

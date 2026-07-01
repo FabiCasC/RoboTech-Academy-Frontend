@@ -10,24 +10,57 @@
 
     <div class="session-info">
       <span class="status-dot"></span>
-      SESSION: SECURE // UID: 9945-AX
+      @if (loading()) {
+        Cargando sesión…
+      } @else {
+        {{ displayName() }} · UID: {{ userUid() }}
+        @if (xp() !== null || level() !== null) {
+          · XP: {{ xp() ?? '—' }} · Nivel: {{ level() ?? '—' }}
+        }
+      }
     </div>
   </div>
+
+  @if (loadError()) {
+    <p class="api-banner">{{ loadError() }}</p>
+  }
 
   <div class="dashboard-content">
     <app-estudiante-flow />
 
-    <div class="courses-grid">
-      @for (course of courses; track course.id) {
-        <app-course-card
-          [badge]="course.badge"
-          [title]="course.title"
-          [description]="course.description"
-          [progress]="course.progress"
-          [image]="course.image"
-          [continueLink]="course.continueLink"
-        />
-      }
-    </div>
+    @if (loading()) {
+      <div class="loading-state">Cargando cursos…</div>
+    } @else if (courses().length === 0) {
+      <div class="empty-state">No hay cursos disponibles aún.</div>
+    } @else {
+      <div class="courses-grid">
+        @for (course of courses(); track course.id) {
+          <app-course-card
+            [badge]="course.badge"
+            [title]="course.title"
+            [description]="course.description"
+            [progress]="course.progress"
+            [image]="course.image"
+            [continueLink]="course.continueLink"
+          />
+        }
+      </div>
+    }
+
+    @if (!loading() && recentProjects().length > 0) {
+      <section class="recent-projects">
+        <h2 class="section-title">Proyectos recientes</h2>
+        <ul class="recent-list">
+          @for (project of recentProjects(); track project.id) {
+            <li>
+              <a [routerLink]="['/laboratorio2d']" [queryParams]="{ projectId: project.id }">
+                {{ project.title }}
+              </a>
+              <span class="recent-meta">{{ project.updatedAt | date: 'short' }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
   </div>
 </div>

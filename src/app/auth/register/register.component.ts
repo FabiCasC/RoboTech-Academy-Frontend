@@ -60,7 +60,6 @@ export class RegisterComponent {
   readonly apiBaseUrl = environment.apiUrl;
 
   readonly registerForm = this.fb.nonNullable.group({
-    displayName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', [Validators.required, confirmMatchesPassword()]]
@@ -87,10 +86,10 @@ export class RegisterComponent {
       return;
     }
 
-    const { displayName, email, password } = this.registerForm.getRawValue();
+    const { email, password } = this.registerForm.getRawValue();
     this.submitting.set(true);
 
-    this.auth.register({ displayName, email, password }).subscribe({
+    this.auth.register({ email, password }).subscribe({
       next: () => {
         this.submitting.set(false);
         if (this.auth.isAuthenticated()) {
@@ -112,13 +111,10 @@ export class RegisterComponent {
 
   private describeRegisterBlockingErrors(): string {
     const parts: string[] = [];
-    const d = this.registerForm.controls.displayName;
     const e = this.registerForm.controls.email;
     const p = this.registerForm.controls.password;
     const c = this.registerForm.controls.confirmPassword;
 
-    if (d.hasError('required')) parts.push('indica tu nombre');
-    if (d.hasError('minlength')) parts.push('nombre: mínimo 2 caracteres');
     if (e.hasError('required')) parts.push('indica el correo');
     if (e.hasError('email')) parts.push('correo no válido (ej. usuario@dominio.com)');
     if (p.hasError('required')) parts.push('indica la contraseña');

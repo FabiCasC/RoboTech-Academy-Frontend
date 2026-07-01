@@ -1,4 +1,8 @@
-@if (course; as selectedCourse) {
+@if (loading()) {
+  <div class="course-detail-loading">Cargando curso…</div>
+} @else if (loadError()) {
+  <div class="course-detail-error" role="alert">{{ loadError() }}</div>
+} @else if (course()) {
   <div class="course-detail">
     <a class="back-link" routerLink="/dashboard">
       <span class="material-symbols-outlined">arrow_back</span>
@@ -7,28 +11,28 @@
 
     <section class="hero-card">
       <div class="hero-copy">
-        <span class="hero-badge">{{ selectedCourse.badge }}</span>
-        <h1>{{ selectedCourse.title }}</h1>
-        <p class="hero-subtitle">{{ selectedCourse.subtitle }}</p>
-        <p class="hero-overview">{{ selectedCourse.overview }}</p>
+        <span class="hero-badge">{{ course()!.badge }}</span>
+        <h1>{{ course()!.title }}</h1>
+        <p class="hero-subtitle">{{ course()!.subtitle }}</p>
+        <p class="hero-overview">{{ course()!.overview }}</p>
 
         <div class="hero-meta">
           <div class="meta-box">
             <span>PROGRESO</span>
-            <strong>{{ getProgressPercent(selectedCourse) }}%</strong>
+            <strong>{{ getProgressPercent(course()!) }}%</strong>
           </div>
           <div class="meta-box">
             <span>MODULOS</span>
-            <strong>{{ selectedCourse.modules.length }}</strong>
+            <strong>{{ course()!.modules.length }}</strong>
           </div>
           <div class="meta-box">
             <span>ENTREGABLES</span>
-            <strong>{{ selectedCourse.project.deliverables.length }}</strong>
+            <strong>{{ course()!.project.deliverables.length }}</strong>
           </div>
         </div>
       </div>
 
-      <div class="hero-visual" [style.background-image]="'url(' + selectedCourse.image + ')'"></div>
+      <div class="hero-visual" [style.background-image]="'url(' + course()!.image + ')'"></div>
     </section>
 
     <section class="content-grid">
@@ -39,7 +43,7 @@
         </div>
 
         <div class="module-list">
-          @for (module of selectedCourse.modules; track module.title; let index = $index) {
+          @for (module of course()!.modules; track module.title; let index = $index) {
             <article class="module-card">
               <div class="module-top">
                 <span class="module-index">M{{ index + 1 }}</span>
@@ -61,11 +65,31 @@
                 <div class="practice-list">
                   @for (practice of module.practices; track practice.id) {
                     <app-course-practice
-                      [courseSlug]="selectedCourse.slug"
+                      [courseSlug]="course()!.slug"
                       [practice]="practice"
                       (changed)="onPracticeChanged()"
                     />
                   }
+                </div>
+              }
+
+              @if (isLaboratorioModule(module)) {
+                <div class="lab-launch-block">
+                  <p class="lab-launch-copy">
+                    Abre el laboratorio virtual con el esquemático del curso ya montado en el canvas.
+                  </p>
+                  <button
+                    type="button"
+                    class="lab-launch-btn"
+                    [disabled]="startingLab()"
+                    (click)="startLaboratorio(course()!)"
+                  >
+                    @if (startingLab()) {
+                      Iniciando…
+                    } @else {
+                      Iniciar Laboratorio
+                    }
+                  </button>
                 </div>
               }
             </article>
@@ -76,14 +100,14 @@
       <aside class="project-panel">
         <div class="section-header">
           <p class="section-kicker">Aplicacion practica</p>
-          <h2>{{ selectedCourse.project.title }}</h2>
+          <h2>{{ course()!.project.title }}</h2>
         </div>
 
-        <p class="project-objective">{{ selectedCourse.project.objective }}</p>
+        <p class="project-objective">{{ course()!.project.objective }}</p>
 
         <div class="info-block">
           <h3>Entregables</h3>
-          @for (item of selectedCourse.project.deliverables; track item) {
+          @for (item of course()!.project.deliverables; track item) {
             <div class="list-row">
               <span class="list-accent"></span>
               <span>{{ item }}</span>
@@ -94,7 +118,7 @@
         <div class="info-block">
           <h3>Herramientas sugeridas</h3>
           <div class="tool-tags">
-            @for (tool of selectedCourse.project.tools; track tool) {
+            @for (tool of course()!.project.tools; track tool) {
               <span class="tool-tag">{{ tool }}</span>
             }
           </div>
@@ -102,7 +126,11 @@
       </aside>
     </section>
 
-    @if (selectedCourse.specs; as specs) {
+    @if (labError(); as err) {
+      <div class="lab-error-banner" role="alert">{{ err }}</div>
+    }
+
+    @if (course()!.specs; as specs) {
       <section class="technical-grid">
         <article class="detail-panel wide-panel">
           <div class="section-header">

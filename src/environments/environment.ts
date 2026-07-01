@@ -1,7 +1,12 @@
+const apiHost = 'http://localhost:8080';
+
 export const environment = {
   production: false,
-  /** Base URL del backend Spring (REST + JWT). */
-  apiUrl: 'http://localhost:8080/api',
-  /** @deprecated Prefer `apiUrl`; se mantiene por compatibilidad con servicios existentes. */
-  API_BASE_URL: 'http://localhost:8080/api'
+  /**
+   * Host del servidor Spring (sin `/api`). Cambia `apiHost` si usas otro puerto.
+   * CORS: Spring debe permitir el origen del `ng serve` (p. ej. http://localhost:4200 o :4300).
+   */
+  apiHost,
+  apiUrl: `${apiHost}/api`,
+  API_BASE_URL: `${apiHost}/api`
 };

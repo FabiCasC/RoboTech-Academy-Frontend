@@ -1,12 +1,15 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Course, Lesson, LessonStatus } from '../models/learning.models';
+import { CoursesApiService } from '../../../core/api/courses-api.service';
 import {
-  getAllLessons,
-  getContinueLessonId,
-  getCourseById,
-  getLessonById
-} from '../data/courses.data';
+  findLesson,
+  flattenLessons,
+  mapLearningCourseDto
+} from '../../../core/api/course.mapper';
+import type { JsonObject } from '../../../core/api/api.models';
 
 @Component({
   selector: 'app-modulo-aprendizaje',
@@ -18,94 +21,127 @@ import {
 export class ModuloAprendizajeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly coursesApi = inject(CoursesApiService);
 
-  readonly course: Course | undefined;
-  readonly lessons: Lesson[];
-  activeLesson: Lesson | undefined;
-  activeIndex = 0;
-  maxUnlockedIndex = 0;
+  readonly loading = signal(true);
+  readonly loadError = signal<string | null>(null);
+  readonly course = signal<Course | null>(null);
+  readonly lessons = signal<Lesson[]>([]);
+  readonly activeLesson = signal<Lesson | null>(null);
+  readonly activeIndex = signal(0);
+  readonly maxUnlockedIndex = signal(0);
 
-  constructor() {
+  ngOnInit(): void {
     const courseId = this.route.snapshot.paramMap.get('courseId') ?? '';
-    this.course = getCourseById(courseId);
-    this.lessons = this.course ? getAllLessons(this.course) : [];
-
-    if (!this.course) {
+    if (!courseId) {
       void this.router.navigate(['/dashboard']);
-    } else {
-      const completedCount = Math.floor((this.course.progress / 100) * this.lessons.length);
-      this.maxUnlockedIndex = Math.min(completedCount, this.lessons.length - 1);
-      if (this.maxUnlockedIndex < 0) this.maxUnlockedIndex = 0;
+      return;
     }
+
+    forkJoin({
+      course: this.coursesApi.getBySlug(courseId),
+      progress: this.coursesApi.getProgress(courseId).pipe(catchError(() => of({})))
+    }).subscribe({
+      next: ({ course, progress }) => {
+        const mapped = mapLearningCourseDto(course as JsonObject);
+        const progressObj = progress as JsonObject;
+        const pct = Number(progressObj['percent'] ?? progressObj['progress'] ?? mapped.progress);
+        mapped.progress = Number.isFinite(pct) ? pct : 0;
+
+        const allLessons = flattenLessons(mapped);
+        this.course.set(mapped);
+        this.lessons.set(allLessons);
+
+        const completedCount = Math.floor((mapped.progress / 100) * allLessons.length);
+        this.maxUnlockedIndex.set(
+          Math.min(Math.max(completedCount, 0), Math.max(allLessons.length - 1, 0))
+        );
+
+        this.loading.set(false);
+        this.bindLessonFromRoute();
+      },
+      error: () => {
+        this.loadError.set('No se pudo cargar el módulo de aprendizaje.');
+        this.loading.set(false);
+        void this.router.navigate(['/dashboard']);
+      }
+    });
+
+    this.route.paramMap.subscribe(() => this.bindLessonFromRoute());
   }
 
   get activeModule() {
-    return this.course?.modules[0];
-  }
-
-  ngOnInit(): void {
-    if (!this.course) return;
-
-    this.route.paramMap.subscribe((params) => {
-      const lessonId =
-        params.get('lessonId') ?? getContinueLessonId(this.course!);
-      this.setActiveLesson(lessonId);
-    });
+    return this.course()?.modules[0];
   }
 
   get moduleProgress(): number {
-    if (!this.lessons.length) return 0;
-    return Math.round(((this.maxUnlockedIndex + 1) / this.lessons.length) * 100);
+    const list = this.lessons();
+    if (!list.length) return 0;
+    return Math.round(((this.maxUnlockedIndex() + 1) / list.length) * 100);
   }
 
   getLessonStatus(index: number): LessonStatus {
-    if (index === this.activeIndex) return 'active';
-    if (index <= this.maxUnlockedIndex) return 'completed';
+    if (index === this.activeIndex()) return 'active';
+    if (index <= this.maxUnlockedIndex()) return 'completed';
     return 'locked';
   }
 
   isLessonClickable(index: number): boolean {
-    return index <= this.maxUnlockedIndex;
+    return index <= this.maxUnlockedIndex();
   }
 
   goToLesson(lesson: Lesson, index: number): void {
-    if (!this.isLessonClickable(index) || !this.course) return;
-    void this.router.navigate(['/cursos', this.course.id, 'leccion', lesson.id]);
+    const c = this.course();
+    if (!this.isLessonClickable(index) || !c) return;
+    void this.router.navigate(['/cursos', c.id, 'leccion', lesson.id]);
   }
 
   goPrevious(): void {
-    if (this.activeIndex > 0 && this.course) {
-      const prev = this.lessons[this.activeIndex - 1];
-      void this.router.navigate(['/cursos', this.course.id, 'leccion', prev.id]);
+    const c = this.course();
+    const list = this.lessons();
+    const idx = this.activeIndex();
+    if (idx > 0 && c) {
+      const prev = list[idx - 1];
+      void this.router.navigate(['/cursos', c.id, 'leccion', prev.id]);
     }
   }
 
   goNext(): void {
-    if (this.activeIndex < this.lessons.length - 1 && this.course) {
-      const next = this.lessons[this.activeIndex + 1];
-      void this.router.navigate(['/cursos', this.course.id, 'leccion', next.id]);
+    const c = this.course();
+    const list = this.lessons();
+    const idx = this.activeIndex();
+    if (idx < list.length - 1 && c) {
+      const next = list[idx + 1];
+      void this.router.navigate(['/cursos', c.id, 'leccion', next.id]);
     }
   }
 
   get hasPrevious(): boolean {
-    return this.activeIndex > 0;
+    return this.activeIndex() > 0;
   }
 
   get hasNext(): boolean {
-    return this.activeIndex < this.lessons.length - 1;
+    return this.activeIndex() < this.lessons().length - 1;
   }
 
-  private setActiveLesson(lessonId: string): void {
-    if (!this.course) return;
+  private bindLessonFromRoute(): void {
+    const c = this.course();
+    if (!c) return;
 
-    const lesson = getLessonById(this.course, lessonId) ?? this.lessons[0];
-    this.activeLesson = lesson;
-    this.activeIndex = this.lessons.findIndex((l) => l.id === lesson.id);
-    if (this.activeIndex < 0) this.activeIndex = 0;
+    const list = this.lessons();
+    const lessonId = this.route.snapshot.paramMap.get('lessonId') ?? list[0]?.id ?? '';
+    const lesson = findLesson(c, lessonId) ?? list[0];
+    if (!lesson) return;
 
-    if (this.activeIndex > this.maxUnlockedIndex) {
-      this.maxUnlockedIndex = this.activeIndex;
-      this.course.progress = this.moduleProgress;
+    this.activeLesson.set(lesson);
+    const idx = list.findIndex((l) => l.id === lesson.id);
+    this.activeIndex.set(idx < 0 ? 0 : idx);
+
+    if (idx > this.maxUnlockedIndex()) {
+      this.maxUnlockedIndex.set(idx);
+      this.course.update((prev) =>
+        prev ? { ...prev, progress: this.moduleProgress } : prev
+      );
     }
   }
 }

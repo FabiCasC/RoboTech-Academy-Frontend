@@ -1,7 +1,5 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 import { KIT_CATALOG } from './pages/componentes/data/kit-catalog.data';
-import { COURSES, getAllLessons } from './pages/aprendizaje/data/courses.data';
-import { COURSE_CATALOG } from './data/course-catalog';
 
 export const serverRoutes: ServerRoute[] = [
   {
@@ -10,10 +8,7 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'cursos/:slug',
-    renderMode: RenderMode.Prerender,
-    async getPrerenderParams() {
-      return COURSE_CATALOG.map((course) => ({ slug: course.slug }));
-    }
+    renderMode: RenderMode.Server
   },
   {
     path: 'components/:id',
@@ -24,15 +19,7 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'cursos/:courseId/leccion/:lessonId',
-    renderMode: RenderMode.Prerender,
-    async getPrerenderParams() {
-      return COURSES.flatMap((course) =>
-        getAllLessons(course).map((lesson) => ({
-          courseId: course.id,
-          lessonId: lesson.id
-        }))
-      );
-    }
+    renderMode: RenderMode.Server
   },
   {
     path: '**',

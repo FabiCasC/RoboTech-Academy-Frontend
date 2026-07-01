@@ -8,8 +8,11 @@
 
 .viewer-host canvas {
   display: block;
-  width: 100% !important;
-  height: 100% !important;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 200px;
+  width: auto !important;
+  height: auto !important;
 }
 
 .viewer-controls {

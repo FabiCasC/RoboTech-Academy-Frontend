@@ -1,11 +1,15 @@
-@if (item) {
+@if (loading()) {
+  <div class="detalle-loading">Cargando componente…</div>
+} @else if (loadError()) {
+  <div class="detalle-error" role="alert">{{ loadError() }}</div>
+} @else if (item()) {
   <div class="detalle-container">
     <a routerLink="/components" class="back-link">
       <span class="material-symbols-outlined">arrow_back</span>
       {{ catalogLabel }}
     </a>
 
-    @if (hasFullDetail && detail) {
+    @if (hasFullDetail && detail()) {
       <div class="detalle-layout">
         <aside class="detalle-left">
           <section class="viewer-card">
@@ -16,8 +20,8 @@
             <button type="button" class="viewer-icon-btn" aria-label="Pantalla completa">
               <span class="material-symbols-outlined">open_in_full</span>
             </button>
-            <div class="viewer-image" role="img" [attr.aria-label]="detail.title">
-              <app-three-kit-viewer #viewer [kitId]="detail.id"></app-three-kit-viewer>
+            <div class="viewer-image" role="img" [attr.aria-label]="detail()!.title">
+              <app-three-kit-viewer #viewer [kitId]="detail()!.id"></app-three-kit-viewer>
             </div>
             <div class="viewer-controls">
               <button
@@ -42,7 +46,7 @@
           <section class="pins-section">
             <h2 class="section-label">DIAGRAMA DE PINES</h2>
             <ul class="pins-list">
-              @for (pin of detail.pins; track pin.name) {
+              @for (pin of detail()!.pins; track pin.name) {
                 <li class="pin-row">
                   <span class="pin-swatch" [class]="'pin-' + pin.color"></span>
                   <div class="pin-info">
@@ -55,7 +59,7 @@
           </section>
 
           <div class="specs-row">
-            @for (spec of detail.specs; track spec.label) {
+            @for (spec of detail()!.specs; track spec.label) {
               <article class="spec-card">
                 <span class="spec-label">{{ spec.label }}</span>
                 <span class="spec-value">{{ spec.value }}</span>
@@ -68,12 +72,12 @@
           <header class="detalle-header">
             <div class="header-main">
               <div class="tags-row">
-                @for (tag of detail.tags; track tag) {
+                @for (tag of detail()!.tags; track tag) {
                   <span class="tag">{{ tag }}</span>
                 }
               </div>
-              <h1 class="detalle-title">{{ detail.title }}</h1>
-              <p class="detalle-subtitle">{{ detail.subtitle }}</p>
+              <h1 class="detalle-title">{{ detail()!.title }}</h1>
+              <p class="detalle-subtitle">{{ detail()!.subtitle }}</p>
             </div>
             <div class="header-actions">
               <button type="button" class="btn-primary" (click)="addToLab()">
@@ -92,7 +96,7 @@
               <span class="material-symbols-outlined info-icon">info</span>
               <h2>¿Qué es?</h2>
             </div>
-            <p>{{ detail.whatIs }}</p>
+            <p>{{ detail()!.whatIs }}</p>
           </section>
 
           <div class="info-grid">
@@ -101,7 +105,7 @@
                 <span class="material-symbols-outlined info-icon">graphic_eq</span>
                 <h2>¿Cómo funciona?</h2>
               </div>
-              <p>{{ detail.howItWorks }}</p>
+              <p>{{ detail()!.howItWorks }}</p>
             </section>
 
             <section class="info-card">
@@ -110,7 +114,7 @@
                 <h2>¿Cómo usarlo?</h2>
               </div>
               <ul class="use-list">
-                @for (use of detail.howToUse; track use) {
+                @for (use of detail()!.howToUse; track use) {
                   <li><strong>{{ use }}</strong></li>
                 }
               </ul>
@@ -126,7 +130,7 @@
             >
               <span class="code-filename">
                 <span class="material-symbols-outlined">code</span>
-                {{ detail.codeFile }}
+                {{ detail()!.codeFile }}
               </span>
               <span class="material-symbols-outlined code-chevron">
                 {{ codeExpanded ? 'expand_less' : 'expand_more' }}
@@ -135,7 +139,7 @@
 
             @if (codeExpanded) {
               <div class="code-panel-body">
-                <pre class="code-snippet">{{ detail.codeSnippet }}</pre>
+                <pre class="code-snippet">{{ detail()!.codeSnippet }}</pre>
                 <button type="button" class="copy-btn" (click)="copyCode()">
                   <span class="material-symbols-outlined">content_copy</span>
                   {{ codeCopied ? 'COPIADO' : 'COPIAR' }}
@@ -150,15 +154,15 @@
         <div class="placeholder-image-wrap">
           <div
             class="placeholder-image"
-            [style.background-image]="'url(' + item.image + ')'"
+            [style.background-image]="'url(' + item()!.image + ')'"
             role="img"
-            [attr.aria-label]="item.title"
+            [attr.aria-label]="item()!.title"
           ></div>
         </div>
         <div class="placeholder-body">
-          <span class="tag">{{ item.category }}</span>
-          <h1 class="detalle-title">{{ item.title }}</h1>
-          <p class="placeholder-description">{{ item.description }}</p>
+          <span class="tag">{{ item()!.category }}</span>
+          <h1 class="detalle-title">{{ item()!.title }}</h1>
+          <p class="placeholder-description">{{ item()!.description }}</p>
           <p class="placeholder-notice">
             La ficha técnica completa de este componente estará disponible próximamente.
           </p>

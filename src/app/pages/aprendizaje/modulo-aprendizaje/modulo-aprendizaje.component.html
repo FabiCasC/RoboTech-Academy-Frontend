@@ -1,4 +1,8 @@
-@if (course && activeLesson && activeModule) {
+@if (loading()) {
+  <div class="modulo-loading">Cargando lecciones…</div>
+} @else if (loadError()) {
+  <div class="modulo-error" role="alert">{{ loadError() }}</div>
+} @else if (course() && activeLesson() && activeModule) {
   <div class="modulo-container">
     <aside class="modulo-sidebar">
       <a routerLink="/dashboard" class="back-dashboard">
@@ -13,7 +17,7 @@
 
       <nav class="lessons-nav" aria-label="Lecciones del módulo">
         <ul class="lessons-list">
-          @for (lesson of lessons; track lesson.id; let i = $index) {
+          @for (lesson of lessons(); track lesson.id; let i = $index) {
             <li>
               <button
                 type="button"
@@ -54,32 +58,32 @@
     <main class="modulo-main">
       <span class="lesson-tag">
         <span class="tag-dot"></span>
-        {{ activeLesson.lessonTag }}
+        {{ activeLesson()!.lessonTag }}
       </span>
 
-      <h2 class="lesson-heading">{{ activeLesson.heading }}</h2>
+      <h2 class="lesson-heading">{{ activeLesson()!.heading }}</h2>
 
-      @for (paragraph of activeLesson.paragraphs; track paragraph) {
+      @for (paragraph of activeLesson()!.paragraphs; track paragraph) {
         <p class="lesson-text">{{ paragraph }}</p>
       }
 
-      @if (activeLesson.diagramTitle && activeLesson.diagramImage) {
+      @if (activeLesson()!.diagramTitle && activeLesson()!.diagramImage) {
         <section class="diagram-card">
           <header class="diagram-header">
             <span class="material-symbols-outlined">account_tree</span>
-            {{ activeLesson.diagramTitle }}
+            {{ activeLesson()!.diagramTitle }}
           </header>
           <div class="diagram-image-wrap">
             <img
-              [src]="activeLesson.diagramImage"
-              [alt]="activeLesson.diagramTitle"
+              [src]="activeLesson()!.diagramImage"
+              [alt]="activeLesson()!.diagramTitle"
               loading="lazy"
             />
           </div>
         </section>
       }
 
-      @if (activeLesson.showComponentViewer) {
+      @if (activeLesson()!.showComponentViewer) {
         <section class="viewer-bar">
           <span class="viewer-label">
             <span class="material-symbols-outlined">view_in_ar</span>

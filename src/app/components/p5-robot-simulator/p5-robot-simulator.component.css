@@ -1,0 +1,158 @@
+.sim-root {
+  margin-top: 20px;
+  padding: 18px 20px 22px;
+  border: 1px solid rgba(255, 0, 0, 0.35);
+  border-radius: 8px;
+  background: rgba(12, 12, 12, 0.85);
+}
+
+.sim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sim-kicker {
+  margin: 0 0 4px;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: #ff0000;
+}
+
+.sim-title {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.sim-token {
+  font-size: 10px;
+  color: #888;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
+
+.sim-body {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 16px;
+  align-items: start;
+}
+
+.sim-canvas-wrap {
+  overflow: auto;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.sim-host {
+  width: 800px;
+  height: 600px;
+}
+
+.sim-host canvas {
+  display: block;
+}
+
+.sim-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sim-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-btn {
+  padding: 10px 12px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sim-btn:hover {
+  border-color: #ff0000;
+  color: #fff;
+}
+
+.sim-btn.primary {
+  border-color: #ff0000;
+  background: rgba(255, 0, 0, 0.12);
+  color: #ff6666;
+}
+
+.sim-stat {
+  padding: 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #0a0a0a;
+}
+
+.stat-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ff0000;
+}
+
+.telemetry h3 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #ff0000;
+}
+
+.tele-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: #aaa;
+  padding: 6px 0;
+  border-bottom: 1px solid #222;
+}
+
+.tele-row strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.tele-row strong.negro {
+  color: #ff4444;
+}
+
+@media (max-width: 1100px) {
+  .sim-body {
+    grid-template-columns: 1fr;
+  }
+
+  .sim-canvas-wrap {
+    max-width: 100%;
+  }
+
+  .sim-host {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}

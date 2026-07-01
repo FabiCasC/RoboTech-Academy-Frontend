@@ -45,8 +45,7 @@
               mat-flat-button
               color="primary"
               class="submit-btn"
-              type="button"
-              (click)="onLogin()"
+              type="submit"
               [disabled]="submitting()"
             >
               @if (submitting()) {
@@ -56,25 +55,7 @@
               }
             </button>
           </div>
-
-          <div class="secondary-actions">
-            <button mat-stroked-button type="button" class="ghost-btn" (click)="loginDemoLocal()">
-              Entrar solo demo (sin red)
-            </button>
-          </div>
         </form>
-
-        <div class="demo-block">
-          <p class="demo-title">Cuentas demo (rellenar formulario)</p>
-          <div class="demo-grid">
-            @for (acc of demoAccounts; track acc.email) {
-              <button mat-stroked-button type="button" class="demo-chip" (click)="fillDemo(acc.email, acc.password)">
-                <span class="demo-role">{{ acc.role }}</span>
-                <span class="demo-meta">{{ roleLabel(acc.role) }}</span>
-              </button>
-            }
-          </div>
-        </div>
       </mat-card-content>
 
       <mat-card-actions align="end">

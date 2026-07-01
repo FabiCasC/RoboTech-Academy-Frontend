@@ -40,6 +40,13 @@ export class EstudianteFlowComponent {
       desc: 'Compila en el IDE y visualiza la simulación física.',
       link: '/ide-programacion',
       icon: 'code'
+    },
+    {
+      n: '05',
+      title: 'Foro de la comunidad',
+      desc: 'Comparte avances y resuelve dudas con otros estudiantes.',
+      link: '/foro',
+      icon: 'forum'
     }
   ];
 }

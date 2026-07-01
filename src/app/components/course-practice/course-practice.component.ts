@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { type CoursePractice } from '../../data/course-catalog';
+import { type CoursePractice } from '../../data/course.models';
 import { CourseProgressService } from '../../services/course-progress.service';
 
 @Component({

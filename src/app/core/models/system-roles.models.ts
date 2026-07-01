@@ -2,6 +2,7 @@
 export type SystemRole = 'EST-ROLE' | 'DOC-ROLE' | 'SYS-ROLE';
 
 export interface SessionUser {
+  uid?: string;
   email: string;
   displayName: string;
   role: SystemRole;

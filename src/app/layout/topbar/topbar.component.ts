@@ -18,9 +18,18 @@ export class TopbarComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
-  readonly session = this.authService.getSession();
-  readonly roleProfile = this.session ? ROLE_PROFILES[this.session.role] : null;
-  readonly isStudent = this.authService.hasRole('EST-ROLE');
+  get session() {
+    return this.authService.getSession();
+  }
+
+  get roleProfile() {
+    const s = this.session;
+    return s ? ROLE_PROFILES[s.role] : null;
+  }
+
+  get isStudent(): boolean {
+    return this.authService.hasRole('EST-ROLE');
+  }
 
   constructor() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {

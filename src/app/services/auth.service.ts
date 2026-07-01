@@ -1,7 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, map, tap, throwError } from 'rxjs';
+import { Observable, catchError, map, switchMap, tap, throwError, of } from 'rxjs';
 import {
   ROLE_PROFILES,
   type SessionUser,
@@ -9,13 +9,8 @@ import {
 } from '../core/models/system-roles.models';
 import { environment } from '../../environments/environment';
 import { ROBO_AUTH_STORAGE } from './auth-storage.keys';
-
-interface DemoAccount {
-  email: string;
-  password: string;
-  displayName: string;
-  role: SystemRole;
-}
+import { UsersApiService } from '../core/api/users-api.service';
+import type { JsonObject } from '../core/api/api.models';
 
 /** Respuesta flexible Spring Security / JWT */
 interface AuthTokenResponse {
@@ -24,62 +19,37 @@ interface AuthTokenResponse {
   jwt?: string;
   bearerToken?: string;
   access_token?: string;
+  uid?: string;
   role?: string;
   roles?: string[];
   displayName?: string;
   fullName?: string;
   email?: string;
   user?: {
+    uid?: string;
     email?: string;
     displayName?: string;
     role?: string;
   };
 }
 
+/** Cuerpo exacto del POST `/api/auth/register` (solo email + password). */
 export interface RegisterRequest {
   email: string;
   password: string;
-  displayName: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly http = inject(HttpClient);
+  private readonly usersApi = inject(UsersApiService);
 
   private readonly storageKey = ROBO_AUTH_STORAGE.session;
   private readonly accessTokenKey = ROBO_AUTH_STORAGE.accessToken;
 
-  private readonly demoAccounts: DemoAccount[] = [
-    {
-      email: 'estudiante@robotech.com',
-      password: 'Estudiante123!',
-      displayName: "Alex 'Tech' Rivera",
-      role: 'EST-ROLE'
-    },
-    {
-      email: 'docente@robotech.com',
-      password: 'Docente1234!',
-      displayName: 'Prof. Elena Morales',
-      role: 'DOC-ROLE'
-    },
-    {
-      email: 'sistema@robotech.com',
-      password: 'Sistema1234!',
-      displayName: 'SYS Orchestrator',
-      role: 'SYS-ROLE'
-    },
-    {
-      email: 'admin@robotech.com',
-      password: 'Admin1234!',
-      displayName: 'Admin RoboTech',
-      role: 'DOC-ROLE'
-    }
-  ];
-
   /**
-   * Login contra el backend (POST). Persiste JWT + sesión.
-   * Body compatible con Spring: `username` + `password` o `email` + `password`.
+   * Login contra el backend (POST). Persiste JWT + sesión y sincroniza `/api/users/me`.
    */
   login(email: string, password: string): Observable<void> {
     const url = `${environment.apiUrl}/auth/login`;
@@ -89,30 +59,22 @@ export class AuthService {
       email: normalized,
       password
     };
-    console.info('[AuthService] POST login →', url, { ...body, password: '***' });
     return this.http.post<AuthTokenResponse>(url, body).pipe(
       tap((res) => this.persistAuthSuccess(normalized, res)),
+      switchMap(() => this.syncSessionFromServer()),
       map(() => void 0),
       catchError((err) => throwError(() => this.mapAuthHttpError(err)))
     );
   }
 
   /**
-   * Registro contra el backend (POST). Si el servidor devuelve JWT, se persiste igual que en login.
+   * Registro: `POST /api/auth/register` con `{ email, password }`.
+   * Si la respuesta incluye JWT, persiste sesión y sincroniza perfil remoto.
    */
   register(body: RegisterRequest): Observable<void> {
     const url = `${environment.apiUrl}/auth/register`;
     const email = body.email.trim().toLowerCase();
-    const payload = {
-      email,
-      password: body.password,
-      displayName: body.displayName.trim(),
-      fullName: body.displayName.trim()
-    };
-    console.info('[AuthService] POST register →', url, {
-      ...payload,
-      password: '***'
-    });
+    const payload = { email, password: body.password };
     return this.http.post<AuthTokenResponse>(url, payload).pipe(
       tap((res) => {
         const token = this.extractToken(res);
@@ -120,27 +82,23 @@ export class AuthService {
           this.persistAuthSuccess(email, res);
         }
       }),
+      switchMap(() => (this.getAccessToken() ? this.syncSessionFromServer() : of(void 0))),
       map(() => void 0),
       catchError((err) => throwError(() => this.mapAuthHttpError(err)))
     );
   }
 
-  /**
-   * Login local demo (sin red). Útil si el backend no está disponible.
-   */
-  loginDemo(email: string, password: string): boolean {
-    const normalizedEmail = email.trim().toLowerCase();
-    const account = this.demoAccounts.find(
-      (a) => a.email === normalizedEmail && a.password === password
+  /** Enriquece la sesión local con `GET /api/users/me`. */
+  syncSessionFromServer(): Observable<void> {
+    return this.usersApi.getMe().pipe(
+      tap((me) => {
+        const current = this.getSession();
+        if (!current) return;
+        this.setSession(this.mergeMeIntoSession(current, me as JsonObject));
+      }),
+      map(() => void 0),
+      catchError(() => of(void 0))
     );
-    if (!account) return false;
-    this.setSession({
-      email: account.email,
-      displayName: account.displayName,
-      role: account.role
-    });
-    this.setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZGVtbyJ9.robotech-demo-signature');
-    return true;
   }
 
   logout(): void {
@@ -195,10 +153,6 @@ export class AuthService {
     return ROLE_PROFILES[role].homeRoute;
   }
 
-  getDemoAccounts(): Array<Omit<DemoAccount, 'password'> & { password: string }> {
-    return this.demoAccounts.map((a) => ({ ...a }));
-  }
-
   private persistAuthSuccess(email: string, res: AuthTokenResponse): void {
     const token = this.extractToken(res);
     if (!token) {
@@ -207,10 +161,34 @@ export class AuthService {
     this.setAccessToken(token);
     const role = this.resolveRole(res);
     this.setSession({
+      uid: res.uid ?? res.user?.uid,
       email,
-      displayName: res.displayName ?? res.fullName ?? res.user?.displayName ?? email,
+      displayName:
+        res.displayName ??
+        res.fullName ??
+        res.user?.displayName ??
+        email,
       role
     });
+  }
+
+  private mergeMeIntoSession(session: SessionUser, me: JsonObject): SessionUser {
+    const role = this.resolveRoleFromMe(me) ?? session.role;
+    return {
+      uid: String(me['uid'] ?? me['id'] ?? session.uid ?? ''),
+      email: String(me['email'] ?? session.email),
+      displayName: String(me['displayName'] ?? me['fullName'] ?? session.displayName),
+      role
+    };
+  }
+
+  private resolveRoleFromMe(me: JsonObject): SystemRole | null {
+    const raw = me['role'] ?? (Array.isArray(me['roles']) ? me['roles'][0] : undefined);
+    const candidate = raw as SystemRole | undefined;
+    if (candidate && ROLE_PROFILES[candidate]) {
+      return candidate;
+    }
+    return null;
   }
 
   private extractToken(res: AuthTokenResponse): string | null {
@@ -225,11 +203,7 @@ export class AuthService {
   }
 
   private resolveRole(res: AuthTokenResponse): SystemRole {
-    const raw =
-      res.role ??
-      res.roles?.[0] ??
-      res.user?.role ??
-      undefined;
+    const raw = res.role ?? res.roles?.[0] ?? res.user?.role ?? undefined;
     const candidate = raw as SystemRole | undefined;
     if (candidate && ROLE_PROFILES[candidate]) {
       return candidate;
@@ -252,9 +226,7 @@ export class AuthService {
       ) {
         return new Error(
           'Spring Security está bloqueando el login/registro sin JWT. ' +
-            'En el backend, permite acceso anónimo a esas rutas, por ejemplo: ' +
-            'authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll() …) ' +
-            '(ajusta las rutas exactas a tu @RequestMapping).'
+            'En el backend, permite acceso anónimo a esas rutas.'
         );
       }
       return new Error(text || err.message || `Error HTTP ${err.status}`);
@@ -263,7 +235,6 @@ export class AuthService {
     return new Error('Error de autenticación');
   }
 
-  /** Texto legible desde cuerpos JSON de Spring, RFC7807 o texto plano. */
   private extractAuthErrorText(err: HttpErrorResponse): string {
     const body = err.error;
     if (typeof body === 'string') {
@@ -294,10 +265,7 @@ export class AuthService {
     return '';
   }
 
-  private pickFirstString(
-    o: Record<string, unknown>,
-    keys: string[]
-  ): string {
+  private pickFirstString(o: Record<string, unknown>, keys: string[]): string {
     for (const k of keys) {
       const v = o[k];
       if (typeof v === 'string' && v.length > 0) return v;

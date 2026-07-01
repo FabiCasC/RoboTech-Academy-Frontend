@@ -1,5 +1,8 @@
+const apiHost = 'http://localhost:8080';
+
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api',
-  API_BASE_URL: 'http://localhost:8080/api'
+  apiHost,
+  apiUrl: `${apiHost}/api`,
+  API_BASE_URL: `${apiHost}/api`
 };

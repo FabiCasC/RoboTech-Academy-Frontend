@@ -1,140 +1,130 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { COURSE_CATALOG } from '../data/course-catalog';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, map, tap, catchError, of } from 'rxjs';
+import { ProjectsApiService } from '../core/api/projects-api.service';
+import { mapProjectDtoToLabProject } from '../core/api/project.mapper';
 import type { LabProject } from '../pages/proyectos/models/lab-project.models';
 
-type StoredLabProjects = {
-  version: 1;
-  projects: LabProject[];
-};
-
+/**
+ * Proyectos del laboratorio desde Spring (`/api/projects`), con caché en memoria.
+ */
 @Injectable({ providedIn: 'root' })
 export class LabProjectsService {
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly storageKey = 'robotech_lab_projects_v1';
+  private readonly api = inject(ProjectsApiService);
+  private readonly items = signal<LabProject[]>([]);
 
   list(): LabProject[] {
-    const stored = this.getAll();
-    const merged = this.mergeSeeds(stored.projects);
-    return merged.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return [...this.items()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
   getById(id: string): LabProject | undefined {
-    return this.list().find((p) => p.id === id);
+    return this.items().find((p) => p.id === id);
   }
 
-  createFree(title: string, description: string): LabProject {
-    const now = new Date().toISOString();
-    const project: LabProject = {
-      id: `free-${this.randomId()}`,
-      kind: 'FREE',
-      title: title.trim() || 'LAB LIBRE',
-      description: description.trim() || 'Proyecto libre para experimentar con el laboratorio.',
-      createdAt: now,
-      updatedAt: now
-    };
-
-    const stored = this.getAll();
-    stored.projects = [project, ...stored.projects];
-    this.setAll(stored);
-    return project;
+  syncFromRemote(): Observable<void> {
+    return this.api.list().pipe(
+      map((rows) =>
+        (Array.isArray(rows) ? rows : []).map((r) =>
+          mapProjectDtoToLabProject(r as Record<string, unknown>)
+        )
+      ),
+      tap((list) => this.items.set(list)),
+      map(() => void 0),
+      catchError(() => {
+        this.items.set([]);
+        return of(void 0);
+      })
+    );
   }
 
-  updateFree(id: string, patch: { title?: string; description?: string }): LabProject | undefined {
-    const stored = this.getAll();
-    const index = stored.projects.findIndex((p) => p.id === id);
-    if (index < 0) {
-      return undefined;
+  fetchOne(id: string): Observable<LabProject> {
+    return this.api.getById(id).pipe(
+      map((row) => mapProjectDtoToLabProject(row as Record<string, unknown>)),
+      tap((p) => {
+        this.items.update((arr) => {
+          const i = arr.findIndex((x) => x.id === p.id);
+          if (i < 0) return [p, ...arr];
+          const copy = [...arr];
+          copy[i] = p;
+          return copy;
+        });
+      })
+    );
+  }
+
+  createFree(title: string, description: string): Observable<LabProject> {
+    return this.api
+      .create({
+        title: title.trim() || 'Laboratorio libre',
+        description: description.trim() || undefined,
+        courseSlug: null
+      })
+      .pipe(
+        map((row) => mapProjectDtoToLabProject(row as Record<string, unknown>)),
+        tap((p) => this.items.update((arr) => [p, ...arr]))
+      );
+  }
+
+  /** Laboratorio vinculado a un curso (`POST /api/projects` con `courseSlug`). */
+  createForCourse(courseSlug: string, courseTitle: string): Observable<LabProject> {
+    return this.api
+      .create({
+        courseSlug,
+        title: `Mi laboratorio - ${courseTitle}`
+      })
+      .pipe(
+        map((row) => mapProjectDtoToLabProject(row as Record<string, unknown>)),
+        tap((p) => this.items.update((arr) => [p, ...arr]))
+      );
+  }
+
+  saveWorkspace(
+    projectId: string,
+    body: {
+      components: unknown[];
+      connections: unknown[];
+      firmwareCode?: string;
+      submitted?: boolean;
     }
+  ): Observable<void> {
+    return this.api
+      .putWorkspace(projectId, {
+        components: body.components as Record<string, unknown>[],
+        connections: body.connections as Record<string, unknown>[],
+        firmwareCode: body.firmwareCode,
+        submitted: body.submitted
+      })
+      .pipe(map(() => void 0));
+  }
 
-    const current = stored.projects[index];
-    if (current.kind !== 'FREE') {
-      return current;
+  updateFree(
+    id: string,
+    patch: { title?: string; description?: string }
+  ): Observable<LabProject | undefined> {
+    const current = this.getById(id);
+    if (!current || current.kind !== 'FREE') {
+      return of(current);
     }
-
-    const next: LabProject = {
-      ...current,
-      title: patch.title?.trim() ? patch.title.trim() : current.title,
-      description: patch.description?.trim() ? patch.description.trim() : current.description,
-      updatedAt: new Date().toISOString()
-    };
-
-    stored.projects[index] = next;
-    this.setAll(stored);
-    return next;
+    return this.api.patch(id, patch).pipe(
+      map((row) => mapProjectDtoToLabProject(row as Record<string, unknown>)),
+      tap((p) =>
+        this.items.update((arr) => arr.map((x) => (x.id === id ? p : x)))
+      )
+    );
   }
 
   touch(id: string): void {
-    const stored = this.getAll();
-    const index = stored.projects.findIndex((p) => p.id === id);
-    if (index < 0) return;
-    stored.projects[index] = { ...stored.projects[index], updatedAt: new Date().toISOString() };
-    this.setAll(stored);
-  }
-
-  private mergeSeeds(existing: LabProject[]): LabProject[] {
-    const seedProjects: LabProject[] = COURSE_CATALOG.map((course) => {
-      const now = new Date().toISOString();
-      return {
-        id: `course-${course.slug}`,
-        kind: 'COURSE',
-        title: course.project.title,
-        description: course.project.objective,
-        courseSlug: course.slug,
-        createdAt: now,
-        updatedAt: now
-      };
-    });
-
-    const byId = new Map<string, LabProject>();
-    seedProjects.forEach((p) => byId.set(p.id, p));
-    existing.forEach((p) => byId.set(p.id, p));
-
-    const merged = Array.from(byId.values());
-    const stored = this.getAll();
-    const changed =
-      merged.length !== stored.projects.length ||
-      merged.some((p) => !stored.projects.find((sp) => sp.id === p.id));
-
-    if (changed) {
-      this.setAll({ version: 1, projects: merged });
-    }
-
-    return merged;
-  }
-
-  private getAll(): StoredLabProjects {
-    if (!isPlatformBrowser(this.platformId)) {
-      return { version: 1, projects: [] };
-    }
-
-    const raw = window.localStorage.getItem(this.storageKey);
-    if (!raw) {
-      return { version: 1, projects: [] };
-    }
-
-    try {
-      const parsed = JSON.parse(raw) as StoredLabProjects;
-      if (!parsed || parsed.version !== 1 || !Array.isArray(parsed.projects)) {
-        window.localStorage.removeItem(this.storageKey);
-        return { version: 1, projects: [] };
-      }
-      return parsed;
-    } catch {
-      window.localStorage.removeItem(this.storageKey);
-      return { version: 1, projects: [] };
-    }
-  }
-
-  private setAll(data: StoredLabProjects): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    window.localStorage.setItem(this.storageKey, JSON.stringify(data));
-  }
-
-  private randomId(): string {
-    return Math.random().toString(36).slice(2, 10);
+    const p = this.getById(id);
+    if (!p) return;
+    this.api
+      .patch(id, { title: p.title, description: p.description })
+      .subscribe({
+        next: (row) => {
+          const next = mapProjectDtoToLabProject(row as Record<string, unknown>);
+          this.items.update((arr) => arr.map((x) => (x.id === id ? next : x)));
+        },
+        error: () => {
+          /* opcional: toast */
+        }
+      });
   }
 }
-

@@ -13,7 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
-import { ROLE_PROFILES, type SystemRole } from '../../core/models/system-roles.models';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -38,8 +37,6 @@ export class LoginComponent {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
 
-  readonly roleProfiles = ROLE_PROFILES;
-  readonly demoAccounts = this.auth.getDemoAccounts();
   readonly apiBaseUrl = environment.apiUrl;
 
   readonly submitting = signal(false);
@@ -51,7 +48,6 @@ export class LoginComponent {
   });
 
   onLogin(): void {
-    console.log('Intentando conectar...');
     this.errorMessage.set(null);
 
     if (this.loginForm.invalid) {
@@ -69,36 +65,9 @@ export class LoginComponent {
         void this.router.navigateByUrl(this.auth.getHomeRoute());
       },
       error: (err: Error) => {
-        console.error('Login HTTP error', err);
         this.submitting.set(false);
         this.errorMessage.set(err.message ?? 'No se pudo iniciar sesión.');
       }
     });
-  }
-
-  /** Rellena el formulario (cuenta demo). El envío sigue siendo explícito con «Iniciar sesión» o demo+API. */
-  fillDemo(email: string, password: string): void {
-    this.loginForm.patchValue({ email, password });
-  }
-
-  /** Demo sin llamar al servidor (fallback). */
-  loginDemoLocal(): void {
-    console.log('Intentando login demo local...');
-    this.errorMessage.set(null);
-    const { email, password } = this.loginForm.getRawValue();
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-    const ok = this.auth.loginDemo(email, password);
-    if (!ok) {
-      this.errorMessage.set('Credenciales demo no reconocidas.');
-      return;
-    }
-    void this.router.navigateByUrl(this.auth.getHomeRoute());
-  }
-
-  roleLabel(role: SystemRole): string {
-    return ROLE_PROFILES[role].label;
   }
 }

@@ -1,101 +1,182 @@
 <div class="doc-root">
   <header class="doc-header">
     <div>
-      <p class="doc-badge">{{ profile.code }}-ROLE · DOCENTE ASIGNADO</p>
-      <h1>PANEL_ANALÍTICO_DOCENTE</h1>
-      <p class="doc-sub">
-        Seguimiento académico · {{ session?.displayName }}
-      </p>
+      <p class="doc-badge">{{ profile.code }}-ROLE · CALIFICACIÓN DE ENTREGAS</p>
+      <h1>PANEL_DOCENTE</h1>
+      <p class="doc-sub">Revisión de circuitos y firmware · {{ session?.displayName }}</p>
     </div>
-    <a routerLink="/sistema" class="doc-link-sys">
-      <span class="material-symbols-outlined">hub</span>
-      Ver motores SYS
-    </a>
+    <button type="button" class="btn-refresh" (click)="reloadSubmissions()" [disabled]="loading()">
+      Actualizar
+    </button>
   </header>
 
-  <section class="kpi-grid">
-    <article class="kpi-card">
-      <span class="kpi-label">ESTUDIANTES</span>
-      <span class="kpi-value">{{ kpis.totalStudents }}</span>
-    </article>
-    <article class="kpi-card">
-      <span class="kpi-label">PROGRESO MEDIO</span>
-      <span class="kpi-value">{{ kpis.avgProgress }}%</span>
-    </article>
-    <article class="kpi-card warn">
-      <span class="kpi-label">EN RIESGO / INACTIVOS</span>
-      <span class="kpi-value">{{ kpis.atRisk }}</span>
-    </article>
-    <article class="kpi-card ok">
-      <span class="kpi-label">ACTIVOS HOY</span>
-      <span class="kpi-value">{{ kpis.activeToday }}</span>
-    </article>
-  </section>
-
-  <section class="sections-block">
-    <h2>SECCIONES</h2>
-    <div class="section-chips">
-      <button
-        type="button"
-        class="chip"
-        [class.active]="selectedSection() === null"
-        (click)="selectSection(null)"
-      >
-        Todas
-      </button>
-      @for (sec of sections; track sec.id) {
-        <button
-          type="button"
-          class="chip"
-          [class.active]="selectedSection() === sec.id"
-          (click)="selectSection(sec.id)"
-        >
-          {{ sec.name }} · {{ sec.avgProgress }}%
-        </button>
-      }
-    </div>
-  </section>
+  @if (loadError(); as err) {
+    <div class="alert alert-error" role="alert">{{ err }}</div>
+  }
 
   <section class="table-block">
-    <h2>MÉTRICAS POR ESTUDIANTE</h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>ALUMNO</th>
-            <th>SECCIÓN</th>
-            <th>PROGRESO</th>
-            <th>LAB</th>
-            <th>IDE</th>
-            <th>ÚLTIMA ACT.</th>
-            <th>ESTADO</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (st of students; track st.id) {
+    <h2>ENTREGAS DE ALUMNOS</h2>
+
+    @if (loading()) {
+      <p class="state-msg">Cargando entregas…</p>
+    } @else if (loadError()) {
+      <p class="state-msg">No se pudieron cargar las entregas.</p>
+    } @else if (!submissions().length) {
+      <p class="state-msg">No hay entregas pendientes de revisión.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
             <tr>
-              <td>{{ st.id }}</td>
-              <td>{{ st.name }}</td>
-              <td>{{ st.section }}</td>
-              <td>
-                <div class="progress-cell">
-                  <div class="progress-bar" [style.width.%]="st.progressPercent"></div>
-                  <span>{{ st.progressPercent }}%</span>
-                </div>
-              </td>
-              <td>{{ st.labSessions }}</td>
-              <td>{{ st.ideCompilations }}</td>
-              <td>{{ st.lastActive }}</td>
-              <td>
-                <span class="status-pill" [class]="st.status">
-                  {{ statusLabel(st.status) }}
-                </span>
-              </td>
+              <th>Alumno</th>
+              <th>Curso</th>
+              <th>Última modificación</th>
+              <th>Estado</th>
+              <th>Calificación</th>
+              <th>Acciones</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @for (row of submissions(); track row.projectId) {
+              <tr
+                class="data-row"
+                [class.selected]="selectedRow()?.projectId === row.projectId"
+                (click)="openSubmission(row)"
+              >
+                <td>{{ row.studentName }}</td>
+                <td>{{ row.courseName }}</td>
+                <td>{{ formatDate(row.lastModified) }}</td>
+                <td>
+                  <span class="status-pill" [class.validado]="row.status === 'VALIDADO'" [class.pendiente]="row.status === 'PENDIENTE'">
+                    {{ statusLabel(row.status) }}
+                  </span>
+                </td>
+                <td>{{ gradeDisplay(row.grade) }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-action"
+                    (click)="openSubmission(row, $event)"
+                  >
+                    Revisar
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </section>
+
+  @if (panelOpen()) {
+    <div class="panel-backdrop" (click)="closePanel()" aria-hidden="true"></div>
+    <aside class="side-panel" role="dialog" aria-labelledby="panel-title">
+      <header class="panel-header">
+        <div>
+          <p class="panel-kicker">REVISIÓN DE ENTREGA</p>
+          <h2 id="panel-title">{{ selectedRow()?.studentName }}</h2>
+          <p class="panel-meta">{{ selectedRow()?.courseName }}</p>
+        </div>
+        <button type="button" class="btn-close" (click)="closePanel()" aria-label="Cerrar">✕</button>
+      </header>
+
+      @if (detailLoading()) {
+        <p class="state-msg panel-state">Cargando circuito y código…</p>
+      } @else {
+        <div class="panel-body">
+          @if (detailError(); as derr) {
+            <div class="alert alert-error" role="alert">{{ derr }}</div>
+          }
+          @if (gradeSuccess(); as ok) {
+            <div class="alert alert-success" role="status">{{ ok }}</div>
+          }
+
+          <section class="panel-section">
+            <h3>CIRCUITO DEL ALUMNO</h3>
+            <div class="canvas-frame">
+              @if (detailComponents().length) {
+                <app-p5-lab2d-canvas
+                  [components]="detailComponents()"
+                  [connections]="detailConnections()"
+                  [selectedId]="null"
+                  [readonly]="true"
+                />
+              } @else {
+                <p class="empty-canvas">Sin componentes en el circuito.</p>
+              }
+            </div>
+          </section>
+
+          <section class="panel-section">
+            <h3>FIRMWARE</h3>
+            <textarea
+              class="code-area"
+              readonly
+              rows="10"
+              [value]="firmwareCode()"
+            ></textarea>
+          </section>
+
+          <section class="panel-section">
+            <h3>REPORTE DE VALIDACIÓN</h3>
+            <div class="validation-grid">
+              <div class="validation-item">
+                <span class="val-label">hwStatus</span>
+                <span class="val-value">{{ hwStatus() }}</span>
+              </div>
+              <div class="validation-item">
+                <span class="val-label">firmwareStatus</span>
+                <span class="val-value">{{ firmwareStatus() }}</span>
+              </div>
+            </div>
+            @if (faults().length) {
+              <ul class="faults-list">
+                @for (f of faults(); track $index) {
+                  <li>{{ f }}</li>
+                }
+              </ul>
+            } @else {
+              <p class="faults-empty">Sin fallos reportados.</p>
+            }
+          </section>
+
+          <section class="panel-section grade-section">
+            <h3>CALIFICACIÓN</h3>
+            <label class="field-label" for="grade-input">Nota (0–100)</label>
+            <input
+              id="grade-input"
+              type="number"
+              class="grade-input"
+              min="0"
+              max="100"
+              [ngModel]="gradeInput()"
+              (ngModelChange)="gradeInput.set($event === '' || $event === null ? null : +$event)"
+            />
+            <label class="field-label" for="feedback-input">Feedback</label>
+            <textarea
+              id="feedback-input"
+              class="feedback-area"
+              rows="4"
+              placeholder="Comentarios para el alumno…"
+              [ngModel]="feedbackInput()"
+              (ngModelChange)="feedbackInput.set($event)"
+            ></textarea>
+            <button
+              type="button"
+              class="btn-grade"
+              (click)="submitGrade()"
+              [disabled]="grading()"
+            >
+              @if (grading()) {
+                Guardando…
+              } @else {
+                Calificar
+              }
+            </button>
+          </section>
+        </div>
+      }
+    </aside>
+  }
 </div>

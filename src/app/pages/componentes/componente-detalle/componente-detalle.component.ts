@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ThreeKitViewerComponent } from '../../../components/three-kit-viewer/three-kit-viewer.component';
 import { KitDetail, KitItem } from '../models/kit.models';
-import { getKitItemById } from '../data/kit-catalog.data';
-import { getKitDetailById } from '../data/kit-details.data';
+import { getKitItemById, KIT_CATALOG } from '../data/kit-catalog.data';
+import { KitService } from '../../../services/kit.service';
 
 @Component({
   selector: 'app-componente-detalle',
@@ -12,30 +14,55 @@ import { getKitDetailById } from '../data/kit-details.data';
   templateUrl: './componente-detalle.component.html',
   styleUrl: './componente-detalle.component.css'
 })
-export class ComponenteDetalleComponent {
+export class ComponenteDetalleComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly kitService = inject(KitService);
 
-  readonly item: KitItem | undefined;
-  readonly detail: KitDetail | undefined;
-  readonly hasFullDetail: boolean;
+  readonly loading = signal(true);
+  readonly loadError = signal<string | null>(null);
+  readonly item = signal<KitItem | null>(null);
+  readonly detail = signal<KitDetail | null>(null);
+
   codeCopied = false;
   codeExpanded = false;
 
-  constructor() {
+  ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
-    this.detail = getKitDetailById(id);
-    this.item = this.detail ?? getKitItemById(id);
-    this.hasFullDetail = !!this.detail;
 
-    if (!this.item) {
-      void this.router.navigate(['/components']);
-    }
+    forkJoin({
+      catalog: this.kitService.getCatalog().pipe(catchError(() => of(KIT_CATALOG))),
+      detail: this.kitService.getDetail(id).pipe(catchError(() => of(null)))
+    }).subscribe({
+      next: ({ catalog, detail }) => {
+        const fromCatalog =
+          (Array.isArray(catalog) ? catalog : KIT_CATALOG).find((k) => k.id === id) ??
+          getKitItemById(id);
+
+        if (!fromCatalog && !detail) {
+          void this.router.navigate(['/components']);
+          return;
+        }
+
+        this.item.set(fromCatalog ?? null);
+        this.detail.set(detail);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loadError.set('No se pudo cargar el componente.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  get hasFullDetail(): boolean {
+    return !!this.detail();
   }
 
   get catalogLabel(): string {
-    if (!this.item) return 'CATÁLOGO DE COMPONENTES';
-    return this.item.category === 'SENSOR'
+    const current = this.item();
+    if (!current) return 'CATÁLOGO DE COMPONENTES';
+    return current.category === 'SENSOR'
       ? 'CATÁLOGO DE SENSORES'
       : 'CATÁLOGO DE COMPONENTES';
   }
@@ -45,10 +72,11 @@ export class ComponenteDetalleComponent {
   }
 
   async copyCode(): Promise<void> {
-    if (!this.detail?.codeSnippet) return;
+    const snippet = this.detail()?.codeSnippet;
+    if (!snippet) return;
 
     try {
-      await navigator.clipboard.writeText(this.detail.codeSnippet);
+      await navigator.clipboard.writeText(snippet);
       this.codeCopied = true;
       setTimeout(() => (this.codeCopied = false), 2000);
     } catch {
@@ -57,9 +85,10 @@ export class ComponenteDetalleComponent {
   }
 
   addToLab(): void {
-    if (!this.item) return;
+    const current = this.item();
+    if (!current) return;
     void this.router.navigate(['/laboratorio2d'], {
-      queryParams: { add: this.item.id }
+      queryParams: { add: current.id }
     });
   }
 }

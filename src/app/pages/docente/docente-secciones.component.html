@@ -5,29 +5,35 @@
     <a routerLink="/docente" class="back">← Volver al panel</a>
   </header>
 
-  <div class="sec-grid">
-    @for (sec of sections; track sec.id) {
-      <article class="sec-card">
-        <h2>{{ sec.name }}</h2>
-        <p class="meta">ID: {{ sec.id }}</p>
-        <div class="stats">
-          <div>
-            <span class="label">Alumnos</span>
-            <span class="val">{{ sec.studentCount }}</span>
+  @if (loading()) {
+    <p class="loading-msg">Cargando secciones…</p>
+  } @else if (sections().length === 0) {
+    <p class="empty-msg">No hay secciones asignadas aún.</p>
+  } @else {
+    <div class="sec-grid">
+      @for (sec of sections(); track sec.id) {
+        <article class="sec-card">
+          <h2>{{ sec.name }}</h2>
+          <p class="meta">ID: {{ sec.id }}</p>
+          <div class="stats">
+            <div>
+              <span class="label">Alumnos</span>
+              <span class="val">{{ sec.studentCount }}</span>
+            </div>
+            <div>
+              <span class="label">Progreso medio</span>
+              <span class="val">{{ sec.avgProgress }}%</span>
+            </div>
+            <div>
+              <span class="label">En riesgo</span>
+              <span class="val warn">{{ sec.atRiskCount }}</span>
+            </div>
           </div>
-          <div>
-            <span class="label">Progreso medio</span>
-            <span class="val">{{ sec.avgProgress }}%</span>
-          </div>
-          <div>
-            <span class="label">En riesgo</span>
-            <span class="val warn">{{ sec.atRiskCount }}</span>
-          </div>
-        </div>
-        <a [routerLink]="['/docente']" [queryParams]="{ section: sec.id }" class="btn">
-          Ver alumnos
-        </a>
-      </article>
-    }
-  </div>
+          <a [routerLink]="['/docente']" [queryParams]="{ section: sec.id }" class="btn">
+            Ver alumnos
+          </a>
+        </article>
+      }
+    </div>
+  }
 </div>

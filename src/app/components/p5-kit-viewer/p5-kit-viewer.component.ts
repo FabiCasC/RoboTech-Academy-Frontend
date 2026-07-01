@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import type p5 from 'p5';
-import { drawKitModel } from './p5-kit-models';
+import { drawKitModel, kitModelSize } from './p5-kit-models';
 
 @Component({
   selector: 'app-p5-kit-viewer',
@@ -42,6 +42,7 @@ export class P5KitViewerComponent implements AfterViewInit, OnChanges, OnDestroy
     if (!this.isBrowser || !this.p5Instance) return;
     if (changes['kitId'] && !changes['kitId'].isFirstChange()) {
       this.rotation = 0;
+      this.applyCanvasSize(this.p5Instance, this.kitId);
     }
   }
 
@@ -58,43 +59,53 @@ export class P5KitViewerComponent implements AfterViewInit, OnChanges, OnDestroy
     this.rotation += 0.35;
   }
 
+  private canvasSizeFor(kitId: string): { w: number; h: number } {
+    const size = kitModelSize(kitId);
+    return { w: size.w + 40, h: size.h + 40 };
+  }
+
+  private applyCanvasSize(sk: p5, kitId: string): void {
+    const { w, h } = this.canvasSizeFor(kitId);
+    sk.resizeCanvas(w, h);
+    if (kitId === 'lidar-v2') {
+      sk.loop();
+    } else {
+      sk.noLoop();
+      sk.redraw();
+    }
+  }
+
   private async mountSketch(): Promise<void> {
     const p5Module = await import('p5');
     const P5 = p5Module.default;
     const host = this.hostRef.nativeElement;
     const kitId = () => this.kitId;
-    const bg = () => this.background;
 
     this.p5Instance = new P5((sk: p5) => {
       sk.setup = () => {
-        const w = host.clientWidth || 320;
-        const h = host.clientHeight || 190;
-        const canvas = sk.createCanvas(w, h, sk.WEBGL);
+        const id = kitId();
+        const { w, h } = this.canvasSizeFor(id);
+        const canvas = sk.createCanvas(w, h);
         canvas.parent(host);
         sk.angleMode(sk.DEGREES);
+        if (id === 'lidar-v2') {
+          sk.loop();
+        } else {
+          sk.noLoop();
+        }
       };
 
       sk.draw = () => {
-        sk.background(bg());
-        sk.ambientLight(120, 120, 130);
-        sk.directionalLight(255, 245, 240, 0.4, 0.8, -0.6);
-        sk.directionalLight(255, 180, 168, -0.6, 0.2, 0.5);
-
+        sk.clear();
+        const id = kitId();
         sk.push();
-        sk.scale(0.9);
-        if (this.autoRotate) {
-          this.rotation += 0.25;
-        }
-        sk.rotateY(this.rotation);
-        sk.rotateX(-18);
-        drawKitModel(sk, kitId());
+        sk.translate(sk.width / 2, sk.height / 2);
+        drawKitModel(sk, id);
         sk.pop();
       };
 
       sk.windowResized = () => {
-        const w = host.clientWidth || 320;
-        const h = host.clientHeight || 190;
-        sk.resizeCanvas(w, h);
+        this.applyCanvasSize(sk, kitId());
       };
     });
   }

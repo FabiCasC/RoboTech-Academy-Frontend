@@ -1,4 +1,4 @@
-@if (project) {
+@if (project(); as p) {
   <div class="project-shell">
     <header class="project-header">
       <button type="button" class="back-link" (click)="backToProjects()">
@@ -14,9 +14,9 @@
     <section class="project-card">
       <div class="card-top">
         <div class="title-block">
-          @if (project.kind === 'COURSE') {
-            <h1 class="project-title">{{ project.title }}</h1>
-            <p class="project-sub">Curso: {{ courseTitle }}</p>
+          @if (p.kind === 'COURSE') {
+            <h1 class="project-title">{{ p.title }}</h1>
+            <p class="project-sub">Curso: {{ courseTitle() ?? p.courseSlug }}</p>
           } @else {
             <h1 class="project-title">LAB LIBRE</h1>
           }
@@ -24,22 +24,22 @@
         <div class="meta">
           <div class="meta-row">
             <span class="meta-key">ID</span>
-            <span class="meta-val">{{ project.id }}</span>
+            <span class="meta-val">{{ p.id }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-key">ACTUALIZADO</span>
-            <span class="meta-val">{{ project.updatedAt | date:'short' }}</span>
+            <span class="meta-val">{{ p.updatedAt | date:'short' }}</span>
           </div>
         </div>
       </div>
 
       <div class="divider"></div>
 
-      @if (project.kind === 'COURSE') {
+      @if (p.kind === 'COURSE') {
         <div class="info-grid">
           <article class="info-panel">
             <div class="panel-label">DESCRIPCION</div>
-            <p class="panel-text">{{ project.description }}</p>
+            <p class="panel-text">{{ p.description }}</p>
           </article>
           <article class="info-panel">
             <div class="panel-label">RELACION</div>
@@ -77,12 +77,17 @@
       </div>
     </section>
   </div>
-} @else {
+} @else if (loadError()) {
   <div class="missing">
     <div class="missing-card">
-      <div class="missing-title">Proyecto no encontrado</div>
+      <div class="missing-title">{{ loadError() }}</div>
       <button type="button" class="btn-primary" (click)="backToProjects()">VOLVER</button>
     </div>
   </div>
+} @else {
+  <div class="missing">
+    <div class="missing-card">
+      <div class="missing-title">Cargando proyecto…</div>
+    </div>
+  </div>
 }
-

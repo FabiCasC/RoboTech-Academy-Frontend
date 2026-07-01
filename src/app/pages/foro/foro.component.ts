@@ -1,55 +1,90 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { ForumApiService } from '../../core/api/forum-api.service';
+import type {
+  ForumBountyDto,
+  ForumLeaderboardEntry,
+  ForumPostDto
+} from '../../core/api/api.models';
+import { extractHttpErrorMessage } from '../../core/api/http-error.util';
 
 @Component({
   selector: 'app-foro',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css'
 })
-export class ForoComponent {
+export class ForoComponent implements OnInit {
+  private readonly forum = inject(ForumApiService);
+
+  uiHint: string | null = null;
+  loadError: string | null = null;
+
+  draftTitle = '';
+  draftContent = '';
+
   currentUser = {
     avatar: 'perfil.png'
   };
 
-  posts = [
-    {
-      authorName: 'Dr. Sarah Vance',
-      authorAvatar: 'sarah_avatar.png',
-      authorTitle: 'Lvl 42 Architect',
-      time: '2h ago',
-      title: 'Módulo de estabilización cinemática bípeda',
-      content: 'Finalmente, se logró una latencia inferior al milisegundo en el bucle de retroalimentación giroscópica. El nuevo chasis de fibra de carbono absorbe la energía cinética residual, lo que sitúa el umbral de equilibrio dentro del parámetro objetivo de 0,02 delta.',
-      badges: [
-        { label: 'LATENCY', value: '0.8ms' },
-        { label: 'DELTA', value: '0.015' },
-        { label: 'STATE', value: 'STABLE' }
-      ],
-      mediaUrl: 'foro_post.png',
-      likes: 342,
-      comments: 48
-    }
-  ];
+  posts: ForumPostDto[] = [];
+  topEngineers: ForumLeaderboardEntry[] = [];
+  bounties: ForumBountyDto[] = [];
 
-  topEngineers = [
-    { rank: '01', name: 'M. Corvey', xp: '14,200 XP', avatar: 'corvey_avatar.png' },
-    { rank: '02', name: 'E. Thorne', xp: '12,850 XP', avatar: 'thorne_avatar.png' },
-    { rank: '03', name: 'J. Denton', xp: '11,400 XP', initials: 'JD' }
-  ];
+  ngOnInit(): void {
+    this.reloadFeed();
+  }
 
-  bounties = [
-    {
-      title: 'Optimize Optical Flow Alg',
-      detail: 'Reduce frame processing time by 15% on edge devices.',
-      tag: 'PRIORITY: HIGH',
-      xp: '+500 XP'
-    },
-    {
-      title: 'Thermal Dissipation Design',
-      detail: 'Design a passive cooling shell for Class 4 servos.',
-      tag: 'HARDWARE',
-      xp: '+350 XP'
+  private reloadFeed(): void {
+    this.loadError = null;
+    forkJoin({
+      posts: this.forum.listPosts().pipe(catchError(() => of([]))),
+      leaderboard: this.forum.leaderboard().pipe(catchError(() => of([]))),
+      bounties: this.forum.bounties().pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ posts, leaderboard, bounties }) => {
+        this.posts = Array.isArray(posts) ? posts : [];
+        this.topEngineers = Array.isArray(leaderboard) ? leaderboard : [];
+        this.bounties = Array.isArray(bounties) ? bounties : [];
+      },
+      error: (err) => (this.loadError = extractHttpErrorMessage(err))
+    });
+  }
+
+  onPostData(): void {
+    const title = this.draftTitle.trim();
+    const content = this.draftContent.trim();
+    if (!title || !content) {
+      this.uiHint = 'Escribe título y contenido antes de publicar.';
+      return;
     }
-  ];
+    this.forum.createPost({ title, content }).subscribe({
+      next: (created) => {
+        this.posts = [created, ...this.posts];
+        this.draftTitle = '';
+        this.draftContent = '';
+        this.uiHint = 'Publicación creada en el servidor.';
+      },
+      error: (err) => (this.uiHint = extractHttpErrorMessage(err))
+    });
+  }
+
+  onToolClick(tool: string): void {
+    this.uiHint = `Herramienta «${tool}»: pendiente de integración con adjuntos en el backend.`;
+  }
+
+  likePost(id: string | number | undefined): void {
+    if (id === undefined || id === null) return;
+    this.forum.likePost(String(id)).subscribe({
+      next: () => {
+        this.uiHint = 'Like registrado.';
+        this.reloadFeed();
+      },
+      error: (err) => (this.uiHint = extractHttpErrorMessage(err))
+    });
+  }
 }

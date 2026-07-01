@@ -12,6 +12,8 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import type p5 from 'p5';
+import { drawKitModel, kitModelSize } from '../p5-kit-viewer/p5-kit-models';
+import { areCompatible, resolvePortSpec } from '../p5-kit-viewer/kit-compatibility';
 
 // ── Public types ─────────────────────────────────────────────────────────────
 
@@ -57,6 +59,7 @@ const HEADER_H = 40;      // px — card header height
 const PORT_R   = 6;       // px — port circle radius
 const PORT_HIT = 11;      // px — click hit-test radius
 const GRID_PX  = 32;      // px — grid cell size
+const FEEDBACK_MS = 2000;
 
 /**
  * Standalone p5.js 2D schematic canvas.
@@ -78,14 +81,16 @@ const GRID_PX  = 32;      // px — grid cell size
   template: `
     <div
       class="canvas-host"
+      [class.readonly]="readonly"
       #host
-      (dragover)="$event.preventDefault()"
+      (dragover)="!readonly && $event.preventDefault()"
       (drop)="onHostDrop($event)">
     </div>
   `,
   styles: [`
     :host        { display: block; width: 100%; height: 100%; }
     .canvas-host { width: 100%; height: 100%; }
+    .canvas-host.readonly { pointer-events: none; cursor: default; }
     .canvas-host :ng-deep canvas { display: block; }
   `]
 })
@@ -96,6 +101,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   @Input() set components(v: Lab2dComponent[]) {
     // Deep-copy so internal drag mutations don't leak into the parent signal
     this._comps = v.map(c => ({ ...c, ports: c.ports.map(p => ({ ...p })) }));
+    this.syncLidarAnimation();
     this.redraw();
   }
 
@@ -108,6 +114,9 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
     this._sel = v;
     this.redraw();
   }
+
+  /** Si true, desactiva arrastre, cableado y drops (solo visualización). */
+  @Input() readonly = false;
 
   // ── Outputs ───────────────────────────────────────────────────────────────
 
@@ -143,6 +152,17 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   private curX = 0;
   private curY = 0;
 
+  private compatFeedback: {
+    message: string;
+    x: number;
+    y: number;
+    until: number;
+    flash: Array<{ compId: string; portId: string }>;
+  } | null = null;
+
+  private feedbackTimer?: ReturnType<typeof setInterval>;
+  private lidarAnimTimer?: ReturnType<typeof setInterval>;
+
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   ngAfterViewInit(): void {
@@ -150,6 +170,8 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearFeedbackTimer();
+    this.clearLidarAnimTimer();
     // Destroys the <canvas> element and removes p5's window event listeners
     this.sketch?.remove();
     this.sketch = undefined;
@@ -158,8 +180,13 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   // ── HTML5 drop handler ───────────────────────────────────────────────────
 
   onHostDrop(event: DragEvent): void {
+    if (this.readonly) return;
     event.preventDefault();
-    const kitId = event.dataTransfer?.getData('text/plain');
+    const dt = event.dataTransfer;
+    let kitId = dt?.getData('text/plain') ?? '';
+    if (!kitId) {
+      kitId = dt?.getData('application/x-kit-id') ?? '';
+    }
     if (!kitId) return;
     const rect = this.hostRef.nativeElement.getBoundingClientRect();
     this.kitDropped.emit({ kitId, x: event.clientX - rect.left, y: event.clientY - rect.top });
@@ -172,6 +199,54 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
     this.sketch?.redraw(); // no-op until sketch is mounted
   }
 
+  private syncLidarAnimation(): void {
+    const hasLidar = this._comps.some((c) => c.kitId === 'lidar-v2');
+    if (hasLidar && !this.lidarAnimTimer) {
+      this.lidarAnimTimer = setInterval(() => this.redraw(), 50);
+    } else if (!hasLidar) {
+      this.clearLidarAnimTimer();
+    }
+  }
+
+  private clearLidarAnimTimer(): void {
+    if (this.lidarAnimTimer) {
+      clearInterval(this.lidarAnimTimer);
+      this.lidarAnimTimer = undefined;
+    }
+  }
+
+  private clearFeedbackTimer(): void {
+    if (this.feedbackTimer) {
+      clearInterval(this.feedbackTimer);
+      this.feedbackTimer = undefined;
+    }
+  }
+
+  private showCompatRejection(sk: p5, reason: string | undefined, portHit: PortHit): void {
+    if (!this.pending) return;
+
+    this.compatFeedback = {
+      message: reason ?? 'Conexión no compatible.',
+      x: sk.mouseX,
+      y: sk.mouseY,
+      until: Date.now() + FEEDBACK_MS,
+      flash: [
+        { compId: this.pending.compId, portId: this.pending.portId },
+        { compId: portHit.compId, portId: portHit.portId }
+      ]
+    };
+
+    this.clearFeedbackTimer();
+    this.feedbackTimer = setInterval(() => {
+      if (!this.compatFeedback || Date.now() >= this.compatFeedback.until) {
+        this.compatFeedback = null;
+        this.clearFeedbackTimer();
+      }
+      this.redraw();
+    }, 50);
+    this.redraw();
+  }
+
   // ── p5 sketch bootstrap ───────────────────────────────────────────────────
 
   private async mount(): Promise<void> {
@@ -181,8 +256,11 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
     this.sketch = new P5((sk: p5) => {
 
       sk.setup = () => {
-        const cvs = sk.createCanvas(host.clientWidth || 800, host.clientHeight || 600);
+        const w = host.offsetWidth || 900;
+        const h = host.offsetHeight || 550;
+        const cvs = sk.createCanvas(w, h);
         cvs.parent(host);
+        sk.resizeCanvas(w, h);
         sk.noLoop();          // Never auto-draw — dirty flag controls all redraws
         sk.pixelDensity(Math.min(window.devicePixelRatio ?? 1, 2));
         this.dirty = true;
@@ -220,7 +298,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
       };
 
       sk.windowResized = () => {
-        sk.resizeCanvas(host.clientWidth || 800, host.clientHeight || 600);
+        sk.resizeCanvas(host.offsetWidth || 900, host.offsetHeight || 550);
         this.redraw();
       };
     });
@@ -236,6 +314,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
     for (const c of this._conns) this.drawCable(sk, c);
     if (this.pending) this.drawWirePreview(sk);
     for (const c of this._comps) this.drawCard(sk, c);
+    this.drawCompatToast(sk);
   }
 
   // ── Grid ──────────────────────────────────────────────────────────────────
@@ -285,6 +364,18 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
     sk.textSize(8);
     sk.text(c.kitId.slice(0, 14).toUpperCase(), c.x + 12, c.y + 33);
 
+    const bodyCy = c.y + HEADER_H + (c.h - HEADER_H) / 2;
+    const bodyW = c.w;
+    const bodyH = c.h - HEADER_H;
+    const { w: mw, h: mh } = kitModelSize(c.kitId);
+    const scale = Math.min((bodyW * 0.9) / mw, (bodyH * 0.9) / mh);
+
+    sk.push();
+    sk.translate(c.x + c.w / 2, bodyCy);
+    sk.scale(scale);
+    drawKitModel(sk, c.kitId);
+    sk.pop();
+
     // Ports
     for (const p of c.ports) this.drawPort(sk, c, p);
   }
@@ -292,7 +383,20 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   private drawPort(sk: p5, c: Lab2dComponent, p: LabPort): void {
     const pos      = this.portXY(c, p);
     const isPend   = this.pending?.compId === c.id && this.pending?.portId === p.id;
+    const isFlash  = this.isPortFlashing(c.id, p.id);
     const ctx      = sk.drawingContext as CanvasRenderingContext2D;
+
+    if (isFlash) {
+      const pulse = 0.45 + 0.55 * Math.abs(Math.sin(Date.now() / 90));
+      ctx.shadowBlur  = 18 * pulse;
+      ctx.shadowColor = '#FF0000';
+      sk.fill(255, 40, 40, 220);
+      sk.stroke(255, 0, 0);
+      sk.strokeWeight(2.5);
+      sk.circle(pos.x, pos.y, PORT_R * 2 + 4 * pulse);
+      ctx.shadowBlur = 0;
+      return;
+    }
 
     if (p.active || isPend) {
       ctx.shadowBlur  = isPend ? 14 : 7;
@@ -303,6 +407,43 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
     sk.strokeWeight(2);
     sk.circle(pos.x, pos.y, PORT_R * 2);
     ctx.shadowBlur = 0;
+  }
+
+  private isPortFlashing(compId: string, portId: string): boolean {
+    if (!this.compatFeedback || Date.now() >= this.compatFeedback.until) return false;
+    return this.compatFeedback.flash.some(
+      (f) => f.compId === compId && f.portId === portId
+    );
+  }
+
+  private drawCompatToast(sk: p5): void {
+    if (!this.compatFeedback || Date.now() >= this.compatFeedback.until) return;
+
+    const msg = this.compatFeedback.message;
+    const padX = 12;
+    const padY = 8;
+    sk.textSize(11);
+    sk.textFont('monospace');
+    const tw = sk.textWidth(msg);
+    const boxW = Math.min(tw + padX * 2, sk.width - 24);
+    const boxH = 34;
+    let bx = this.compatFeedback.x + 14;
+    let by = this.compatFeedback.y - boxH - 12;
+    bx = Math.max(12, Math.min(bx, sk.width - boxW - 12));
+    by = Math.max(12, Math.min(by, sk.height - boxH - 12));
+
+    sk.noStroke();
+    sk.fill(40, 0, 0, 230);
+    sk.rect(bx, by, boxW, boxH, 4);
+    sk.stroke(255, 0, 0);
+    sk.strokeWeight(1.5);
+    sk.noFill();
+    sk.rect(bx, by, boxW, boxH, 4);
+
+    sk.noStroke();
+    sk.fill(255, 120, 120);
+    sk.textAlign(sk.LEFT, sk.CENTER);
+    sk.text(msg, bx + padX, by + boxH / 2, boxW - padX * 2);
   }
 
   // ── Cables (Bézier curves) ────────────────────────────────────────────────
@@ -343,6 +484,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   // ══════════════════════════════════════════════════════════════════════════
 
   private onPress(sk: p5): void {
+    if (this.readonly) return;
     const mx = sk.mouseX, my = sk.mouseY;
 
     // 1. Port hit → wiring mode
@@ -353,7 +495,23 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
         this.pending = portHit;
         this.curX = mx; this.curY = my;
       } else if (portHit.compId !== this.pending.compId) {
-        // Complete connection
+        const fromComp = this._comps.find((c) => c.id === this.pending!.compId);
+        const toComp = this._comps.find((c) => c.id === portHit.compId);
+        const fromSpec = fromComp ? resolvePortSpec(fromComp.kitId, this.pending.portId) : undefined;
+        const toSpec = toComp ? resolvePortSpec(toComp.kitId, portHit.portId) : undefined;
+
+        if (fromComp && toComp && fromSpec && toSpec) {
+          const check = areCompatible(
+            { kitId: fromComp.kitId, port: fromSpec },
+            { kitId: toComp.kitId, port: toSpec }
+          );
+          if (!check.ok) {
+            this.showCompatRejection(sk, check.reason, portHit);
+            this.pending = null;
+            return;
+          }
+        }
+
         this.connectionMade.emit({
           fromComp: this.pending.compId,
           fromPort: this.pending.portId,
@@ -392,6 +550,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private onDrag(sk: p5): void {
+    if (this.readonly) return;
     if (!this.dragId) return;
     const c = this._comps.find(c => c.id === this.dragId);
     if (!c) return;
@@ -402,6 +561,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private onRelease(): void {
+    if (this.readonly) return;
     if (this.dragId && this.dragged) {
       const c = this._comps.find(c => c.id === this.dragId);
       if (c) this.componentMoved.emit({ id: c.id, x: c.x, y: c.y });
@@ -411,6 +571,7 @@ export class P5Lab2dCanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private onDouble(sk: p5): void {
+    if (this.readonly) return;
     const mx = sk.mouseX, my = sk.mouseY;
     for (let i = this._comps.length - 1; i >= 0; i--) {
       const c = this._comps[i];
