@@ -19,6 +19,23 @@ function asString(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : value != null ? String(value) : fallback;
 }
 
+/** Lección en API: string o objeto `{ title, heading, sidebarTitle, ... }`. */
+function lessonTitleFromDto(raw: unknown): string {
+  if (typeof raw === 'string') {
+    const t = raw.trim();
+    return t || 'Lección';
+  }
+  if (raw && typeof raw === 'object') {
+    const o = raw as Record<string, unknown>;
+    const label = asString(
+      o['sidebarTitle'] ?? o['title'] ?? o['heading'] ?? o['lessonTag'] ?? o['name'] ?? o['id'],
+      ''
+    ).trim();
+    return label || 'Lección';
+  }
+  return 'Lección';
+}
+
 function mapPractice(raw: unknown): CoursePractice | null {
   if (!raw || typeof raw !== 'object') return null;
   const o = raw as Record<string, unknown>;
@@ -97,7 +114,7 @@ function mapModule(raw: unknown): CourseModule {
     title: asString(o['title']),
     duration: asString(o['duration']),
     summary: asString(o['summary']),
-    lessons: asArray(o['lessons']).map((l) => asString(l)),
+    lessons: asArray(o['lessons']).map((l) => lessonTitleFromDto(l)),
     practices: asArray(o['practices'])
       .map((p) => mapPractice(p))
       .filter((p): p is CoursePractice => p !== null)
