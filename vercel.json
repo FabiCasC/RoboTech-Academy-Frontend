@@ -4,12 +4,11 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
-    {
-      "source": "/railway-api/:path*",
-      "destination": "https://robotech-academy-backend-production.up.railway.app/api/:path*"
-    },
     { "source": "/", "destination": "/api" },
-    { "source": "/(.*)", "destination": "/api" }
+    {
+      "source": "/((?!api/railway).*)",
+      "destination": "/api"
+    }
   ],
   "functions": {
     "api/index.mjs": {

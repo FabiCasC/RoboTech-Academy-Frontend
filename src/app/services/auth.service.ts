@@ -216,8 +216,13 @@ export class AuthService {
       const text = this.extractAuthErrorText(err);
       if (err.status === 0) {
         return new Error(
-          'Sin respuesta del servidor (¿backend caído, URL mal o CORS?). ' +
-            `Comprueba que existe ${environment.apiUrl} y CORS para el origen de esta app.`
+          'Sin respuesta del servidor (¿backend caído o URL incorrecta?). ' +
+            `Comprueba ${environment.apiUrl}`
+        );
+      }
+      if (err.status === 403 && /invalid cors/i.test(text)) {
+        return new Error(
+          'El backend rechazó la petición por CORS. Redespliega el frontend con el proxy /api/railway o añade tu dominio Vercel en Railway.'
         );
       }
       if (
@@ -231,7 +236,14 @@ export class AuthService {
       }
       return new Error(text || err.message || `Error HTTP ${err.status}`);
     }
-    if (err instanceof Error) return err;
+    if (err instanceof Error) {
+      if (/JSON|Unexpected token/i.test(err.message)) {
+        return new Error(
+          'El servidor respondió con texto plano en lugar de JSON (suele ser un error CORS en Railway).'
+        );
+      }
+      return err;
+    }
     return new Error('Error de autenticación');
   }
 
