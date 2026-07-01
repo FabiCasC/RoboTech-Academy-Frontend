@@ -4,9 +4,13 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
+    {
+      "source": "/api/railway/:path*",
+      "destination": "/api/railway-proxy?path=:path*"
+    },
     { "source": "/", "destination": "/api" },
     {
-      "source": "/((?!api/railway).*)",
+      "source": "/((?!api/railway-proxy|api/railway).*)",
       "destination": "/api"
     }
   ],

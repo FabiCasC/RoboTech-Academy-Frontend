@@ -1,16 +1,26 @@
 /**
  * Proxy server-side hacia Railway (sin CORS del navegador).
- * Rutas: /api/railway/auth/login → .../api/auth/login
+ * Invocado vía rewrite: /api/railway/:path* → /api/railway-proxy?path=:path*
  */
 const BACKEND = 'https://robotech-academy-backend-production.up.railway.app/api';
 
+function resolvePath(req) {
+  const pathParam = req.query.path;
+  if (pathParam) {
+    return Array.isArray(pathParam) ? pathParam.join('/') : String(pathParam);
+  }
+
+  const url = new URL(req.url ?? '/', 'http://localhost');
+  const prefix = '/api/railway-proxy/';
+  if (url.pathname.startsWith(prefix)) {
+    return url.pathname.slice(prefix.length);
+  }
+
+  return '';
+}
+
 export default async function handler(req, res) {
-  const pathParts = req.query.path;
-  const path = Array.isArray(pathParts)
-    ? pathParts.join('/')
-    : pathParts
-      ? String(pathParts)
-      : '';
+  const path = resolvePath(req);
 
   const incoming = new URL(req.url ?? '/', 'http://localhost');
   const qs = [...incoming.searchParams.entries()]
